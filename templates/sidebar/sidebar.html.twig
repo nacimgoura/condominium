@@ -1,0 +1,58 @@
+<div class="sidebar">
+    <div class="sidebar__scroll">
+        <div>
+            <ul class="sidebar-nav">
+                <li class="sidebar-nav__item">
+                    <a class="sidebar-nav__link" href="/">
+                        <span class="sidebar-nav__item_icon iconfont iconfont-home"></span>
+                        <span class="sidebar-nav__item-text">Accueil</span>
+                    </a>
+                </li>
+                <li class="sidebar-nav__item">
+                    <a class="sidebar-nav__link" href="/forum">
+                        <span class="sidebar-nav__item_icon iconfont iconfont-layout"></span>
+                        <span class="sidebar-nav__item-text">Conversation</span>
+                    </a>
+                </li>
+                <li class="sidebar-nav__item">
+                    <a class="sidebar-nav__link" href="#">
+                        <span class="sidebar-nav__item_icon iconfont iconfont-ui"></span>
+                        <span class="sidebar-nav__item-text">Charges</span>
+                    </a>
+                </li>
+                <li class="sidebar-nav__item">
+                    <a class="sidebar-nav__link" href="#">
+                        <span class="sidebar-nav__item_icon iconfont iconfont-input"></span>
+                        <span class="sidebar-nav__item-text">Contrats</span>
+                    </a>
+                </li>
+                <li class="sidebar-nav__item">
+                    <a class="sidebar-nav__link" href="#">
+                        <span class="sidebar-nav__item_icon iconfont iconfont-component"></span>
+                        <span class="sidebar-nav__item-text">Projets</span>
+                    </a>
+                </li>
+                <li class="sidebar-nav__item">
+                    <a class="sidebar-nav__link" href="#">
+                        <span class="sidebar-nav__item_icon iconfont iconfont-users"></span>
+                        <span class="sidebar-nav__item-text">Réunions</span>
+                    </a>
+                </li>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <li class="sidebar-nav__item">
+                        <a class="sidebar-nav__link" href="/admin/user">
+                            <span class="sidebar-nav__item_icon iconfont iconfont-user"></span>
+                            <span class="sidebar-nav__item-text">Utilisateurs</span>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+
+        <div class="sidebar-nav__footer">
+            <div class="sidebar__collapse">
+                <span class="icon iconfont iconfont-collapse-left-arrows"></span>
+            </div>
+        </div>
+    </div>
+</div>

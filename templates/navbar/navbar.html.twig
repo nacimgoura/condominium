@@ -1,0 +1,61 @@
+<div class="navbar navbar-light navbar-expand-lg">
+    <a class="navbar-brand" href="/">Condominium</a>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse">
+        <span class="iconfont iconfont-navbar-open navbar-toggler__open"></span>
+        <span class="iconfont iconfont-alert-close navbar-toggler__close"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbar-collapse">
+        <div class="p-front__navbar-collapse">
+            {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+
+                <div class="dropdown navbar-dropdown no-arrow navbar-notify-dropdown">
+                    <a class="dropdown-toggle navbar-dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                        <span class="navbar-notify">
+                          <span>
+                            <span class="navbar-notify__icon iconfont iconfont-bell"></span>
+                            <span class="navbar-notify__text">Notifications</span>
+                          </span>
+                          <span class="navbar-notify__amount">3</span>
+                        </span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right navbar-dropdown-menu navbar-dropdown-notifications">
+                        <div class="navbar-dropdown-notifications__header">
+                            <span>NOTIFICATIONS</span>
+                        </div>
+                        <div class="navbar-dropdown-notifications__body">
+                            <div class="navbar-dropdown-notifications__body-empty"><img class="navbar-dropdown-notifications__body-empty-image" src="img/empty-notifications.png" alt="">
+                                <div class="navbar-dropdown-notifications__body-empty-text">Aucune notification!</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dropdown navbar-dropdown">
+                    <a class="dropdown-toggle navbar-dropdown-toggle navbar-dropdown-toggle__user" data-toggle="dropdown" href="#">
+                        <img src="/img/user.png" alt="" class="navbar-dropdown-toggle__user-avatar">
+                        <span class="navbar-dropdown__user-name">{{ app.user.username }}</span>
+                    </a>
+                    <div class="dropdown-menu navbar-dropdown-menu navbar-dropdown-menu__user">
+                        <div class="navbar-dropdown-user-content">
+                            <div class="dropdown-user__avatar"><img src="/img/user.png" alt=""/></div>
+                            <div class="dropdown-info">
+                                <div class="dropdown-info__name">{{ app.user.username }}</div>
+                                <div class="dropdown-info__job">Utilisateur</div>
+                                <div class="dropdown-info-buttons">
+                                    <a class="dropdown-info__viewprofile" href="#">
+                                        View Profile
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <a class="dropdown-item navbar-dropdown__item" href="/logout">Déconnexion</a>
+                    </div>
+                </div>
+            {% else %}
+                <a class="btn btn-info" href="/login">Connexion</a>
+            {% endif %}
+        </div>
+    </div>
+</div>

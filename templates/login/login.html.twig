@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block bodyClass %}p-front{% endblock %}
+
+{% block content %}
+
+    <div class="p-signin">
+        {% if error %}
+            <div class="alert alert-danger" role="alert">
+                {{ error.messageKey|trans(error.messageData, 'security') }}
+            </div>
+        {% endif %}
+
+        <form action="{{ path('login') }}" method="post" class="p-signin__form">
+            <h2 class="p-signin__form-heading">Connexion</h2>
+            <div class="p-signin__form-content">
+                <div class="row">
+                    <div class="form-group col-md-12">
+                        <label for="p-signin-work-email">Identifiant : </label>
+                        <input type="text" class="form-control" name="_username"
+                               value="{{ last_username }}" placeholder="votre identifiant">
+                    </div>
+                </div>
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                <div class="row">
+                    <div class="form-group col-md-12">
+                        <label for="p-signin-set-password">Mot de passe : </label>
+                        <input type="password" name="_password" class="form-control" placeholder="votre mot de passe">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-info btn-block btn-lg p-signin__form-submit">Connexion</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}
