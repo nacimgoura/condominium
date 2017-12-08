@@ -8,7 +8,7 @@
 
         <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}" />
 
-        {% block stylesheets %}
+        {% block styles %}
             <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
             <link rel="stylesheet" href="{{ asset('build/app.css') }}">
         {% endblock %}
@@ -34,7 +34,7 @@
             </div>
         </div>
 
-        {% block javascripts %}
+        {% block scripts %}
             <script src="{{ asset('build/app.js') }}"></script>
         {% endblock %}
     </body>

@@ -9,15 +9,15 @@ use Symfony\Component\Routing\Annotation\Route;
 class AdminController extends Controller
 {
     /**
-     * @Route("/admin", name="admin")
+     * @Route("/admin", name="admin_index")
      */
-    public function admin()
+    public function index()
     {
         return new Response('<html><body>Admin page!</body></html>');
     }
 
     /**
-     * @Route("/admin/user", name="gestion_user")
+     * @Route("/admin/user", name="admin_gestion_user")
      */
     public function gestionUser()
     {

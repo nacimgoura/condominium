@@ -1,0 +1,129 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des charges{% endblock %}
+
+
+{% block content %}
+    <div class="container-fluid container-fh m-datagrid">
+        <div class="m-content m-datagrid__content">
+            <div class="m-datagrid__header">
+                <div class="m-datagrid__header-left-side">
+                    <span class="iconfont iconfont-invoices-lg m-datagrid__header-icon"></span>
+                    <h3 class="m-datagrid__header-heading">Liste des charges<span class="m-datagrid__header-items-amount">(24)</span></h3>
+                </div>
+                <div>
+                    <a href="#" class="btn btn-info btn-block icon-left pull-right">
+                        Nouvelle charge <span class="btn-icon iconfont iconfont-plus"></span>
+                    </a>
+                </div>
+            </div>
+            <div class="m-datagrid__body p-invoices-datagrid">
+                <div class="m-datatable">
+                    <table id="datatable" class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Propriétaire</th>
+                                <th>Status</th>
+                                <th>Date d'échéance</th>
+                                <th>Montant</th>
+                                <th>Pièce jointe</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Bruno Nash</td>
+                                <td>Software Engineer</td>
+                                <td>London</td>
+                                <td>38</td>
+                                <td>2011/05/03</td>
+                                <td>$163,500</td>
+                            </tr>
+                            <tr>
+                                <td>Sakura Yamamoto</td>
+                                <td>Support Engineer</td>
+                                <td>Tokyo</td>
+                                <td>37</td>
+                                <td>2009/08/19</td>
+                                <td>$139,575</td>
+                            </tr>
+                            <tr>
+                                <td>Thor Walton</td>
+                                <td>Developer</td>
+                                <td>New York</td>
+                                <td>61</td>
+                                <td>2013/08/11</td>
+                                <td>$98,540</td>
+                            </tr>
+                            <tr>
+                                <td>Finn Camacho</td>
+                                <td>Support Engineer</td>
+                                <td>San Francisco</td>
+                                <td>47</td>
+                                <td>2009/07/07</td>
+                                <td>$87,500</td>
+                            </tr>
+                            <tr>
+                                <td>Serge Baldwin</td>
+                                <td>Data Coordinator</td>
+                                <td>Singapore</td>
+                                <td>64</td>
+                                <td>2012/04/09</td>
+                                <td>$138,575</td>
+                            </tr>
+                            <tr>
+                                <td>Zenaida Frank</td>
+                                <td>Software Engineer</td>
+                                <td>New York</td>
+                                <td>63</td>
+                                <td>2010/01/04</td>
+                                <td>$125,250</td>
+                            </tr>
+                            <tr>
+                                <td>Zorita Serrano</td>
+                                <td>Software Engineer</td>
+                                <td>San Francisco</td>
+                                <td>56</td>
+                                <td>2012/06/01</td>
+                                <td>$115,000</td>
+                            </tr>
+                            <tr>
+                                <td>Jennifer Acosta</td>
+                                <td>Junior Javascript Developer</td>
+                                <td>Edinburgh</td>
+                                <td>43</td>
+                                <td>2013/02/01</td>
+                                <td>$75,650</td>
+                            </tr>
+                            <tr>
+                                <td>Cara Stevens</td>
+                                <td>Sales Assistant</td>
+                                <td>New York</td>
+                                <td>46</td>
+                                <td>2011/12/06</td>
+                                <td>$145,600</td>
+                            </tr>
+                            <tr>
+                                <td>Hermione Butler</td>
+                                <td>Regional Director</td>
+                                <td>London</td>
+                                <td>47</td>
+                                <td>2011/03/21</td>
+                                <td>$356,250</td>
+                            </tr>
+                            <tr>
+                                <td>Lael Greer</td>
+                                <td>Systems Administrator</td>
+                                <td>London</td>
+                                <td>21</td>
+                                <td>2009/02/27</td>
+                                <td>$103,500</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
