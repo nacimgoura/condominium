@@ -9,8 +9,10 @@ class ExceptionController extends Controller
 {
     public function showException(FlattenException $exception) {
         switch ($exception->getStatusCode()) {
+            case '403':
+                return $this->render('exception/403.html.twig');
             case '404':
-                return $this->render('error/404.html.twig');
+                return $this->render('exception/404.html.twig');
         }
     }
 }

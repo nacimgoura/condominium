@@ -1,5 +1,11 @@
 <div class="navbar navbar-light navbar-expand-lg">
     <a class="navbar-brand" href="/">Condominium</a>
+    <a class="navbar-brand-sm" href="/">Condominium</a>
+
+    <button class="sidebar-toggler" type="button">
+        <span class="iconfont iconfont-sidebar-open sidebar-toggler__open"></span>
+        <span class="iconfont iconfont-alert-close sidebar-toggler__close"></span>
+    </button>
 
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse">
         <span class="iconfont iconfont-navbar-open navbar-toggler__open"></span>
@@ -25,7 +31,8 @@
                             <span>NOTIFICATIONS</span>
                         </div>
                         <div class="navbar-dropdown-notifications__body">
-                            <div class="navbar-dropdown-notifications__body-empty"><img class="navbar-dropdown-notifications__body-empty-image" src="img/empty-notifications.png" alt="">
+                            <div class="navbar-dropdown-notifications__body-empty">
+                                <img class="navbar-dropdown-notifications__body-empty-image" src="/img/empty-notifications.png" alt="notification">
                                 <div class="navbar-dropdown-notifications__body-empty-text">Aucune notification!</div>
                             </div>
                         </div>
@@ -50,6 +57,11 @@
                                 </div>
                             </div>
                         </div>
+                        {% if is_granted('ROLE_PREVIOUS_ADMIN') %}
+                            <a class="dropdown-item navbar-dropdown__item" href="{{ path('admin_gestion_user', {'_switch_user': '_exit'}) }}">
+                                Retourner à admin
+                            </a>
+                        {% endif %}
                         <a class="dropdown-item navbar-dropdown__item" href="/logout">Déconnexion</a>
                     </div>
                 </div>

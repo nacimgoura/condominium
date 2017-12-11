@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Forum{% endblock %}
+
+{% block bodyClass %}blog_index{% endblock %}
+
+{% block content %}
+
+    <h2 class="content-heading">
+        Liste des conversations<span class="m-datagrid__header-items-amount">({{ listPost | length }})</span>
+
+        <a href="{{ path('forum_add_post') }}" class="btn btn-info float-right">
+            Ajouter une nouvelle conversation
+        </a>
+    </h2>
+
+    <hr>
+
+    {% for post in listPost %}
+        <article class="post">
+            <h2 class="post-title">
+                <a href="/forum/post/{{ post.id }}">
+                    {{ post.title }}
+                </a>
+            </h2>
+
+            <p class="post-metadata">
+                <span class="metadata"><i class="iconfont iconfont-calendar"></i> {{ post.createdAt | date("d/m/y H:i:s") }}</span>
+                <span class="metadata"><i class="iconfont iconfont-user"></i> {{ post.user.getCompleteName() }}</span>
+                {%  if post.authorizedUser | length %}
+                    <span class="metadata float-right small">Visible par
+                        {{ post.authorizedUser | join(', ') }}
+                    </span>
+                {% endif %}
+            </p>
+
+            <p class="post-content">
+                {{ post.description }}
+            </p>
+
+            <p class="post-tags">
+
+                {{ include('forum/_post_tags.html.twig') }}
+
+                {% if is_granted('ROLE_ADMIN') %}
+                    <span class="float-right">
+                        <a href="{{ path('forum_archive_post', { 'id': post.id }) }}">
+                            <button class="btn btn-sm btn-warning">Archiver</button>
+                        </a>
+                        <a href="{{ path('forum_delete_post', { 'id': post.id }) }}">
+                            <button class="btn btn-sm btn-danger">Supprimer</button>
+                        </a>
+                    </span>
+                {% endif %}
+            </p>
+
+        </article>
+    {% else %}
+        <h2 class="text-center">Aucun post publié!</h2>
+    {% endfor %}
+
+{% endblock %}
+

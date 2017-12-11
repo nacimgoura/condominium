@@ -3,12 +3,14 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Condominium
  *
  * @ORM\Table(name="condominium")
  * @ORM\Entity(repositoryClass="App\Repository\CondominiumRepository")
+ * @UniqueEntity("title")
  */
 class Condominium
 {
@@ -24,9 +26,9 @@ class Condominium
     /**
      * @var string
      *
-     * @ORM\Column(name="name", type="string", length=255, unique=true)
+     * @ORM\Column(name="title", type="string", length=255, unique=true)
      */
-    private $name;
+    private $title;
 
     /**
      * @ORM\OneToMany(targetEntity="User", mappedBy="condominium")
@@ -45,27 +47,23 @@ class Condominium
     }
 
     /**
-     * Set name
+     * Set title
      *
-     * @param string $name
-     *
-     * @return Condominium
+     * @param string $title
      */
-    public function setName($name)
+    public function setTitle($title)
     {
-        $this->name = $name;
-
-        return $this;
+        $this->title = $title;
     }
 
     /**
-     * Get name
+     * Get title
      *
      * @return string
      */
-    public function getName()
+    public function getTitle()
     {
-        return $this->name;
+        return $this->title;
     }
 
     /**

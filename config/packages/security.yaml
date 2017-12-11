@@ -1,12 +1,12 @@
 security:
+    encoders:
+        App\Entity\User:
+            algorithm: bcrypt
     providers:
         user_provider:
             entity:
                 class: App\Entity\User
                 property: username
-    encoders:
-        App\Entity\User:
-            algorithm: bcrypt
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -23,8 +23,8 @@ security:
                 always_use_default_target_path: true
             logout:
                 path:   /logout
-                target: /
-            switch_user: true
+                target: /login
+            switch_user: { role: ROLE_ADMIN }
     access_control:
         - { path: ^/login, roles: 'IS_AUTHENTICATED_ANONYMOUSLY' }
         - { path: ^/admin, roles: 'ROLE_ADMIN' }

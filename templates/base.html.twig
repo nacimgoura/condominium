@@ -6,7 +6,7 @@
 
         <title>{% block title %}Condominium{% endblock %}</title>
 
-        <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}" />
+        <link rel="icon" type="image/png" href="/img/favicon.png" />
 
         {% block styles %}
             <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
@@ -30,7 +30,23 @@
             {% endif %}
 
             <div class="page-content">
-                {% block content %}{% endblock %}
+
+                <div class="container-fluid">
+                    {% for label, messages in app.flashes %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ label }}" role="alert">
+                                <span class="alert-icon iconfont iconfont-info"></span>
+                                {{ message }}
+                                <span class="close iconfont iconfont-alert-close" data-dismiss="alert"></span>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+
+                <div class="container-fluid {% block containerClass %}{% endblock %}">
+                    {% block content %}{% endblock %}
+                </div>
+
             </div>
         </div>
 

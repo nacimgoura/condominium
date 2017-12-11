@@ -3,12 +3,15 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\JoinColumn;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Charge
  *
  * @ORM\Table(name="charge")
  * @ORM\Entity(repositoryClass="App\Repository\ChargeRepository")
+ * @UniqueEntity("title")
  */
 class Charge
 {
@@ -24,9 +27,9 @@ class Charge
     /**
      * @var string
      *
-     * @ORM\Column(name="name", type="string", length=255)
+     * @ORM\Column(name="title", type="string", length=255)
      */
-    private $name;
+    private $title;
 
     /**
      * @var float
@@ -38,48 +41,51 @@ class Charge
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="deadline", type="date")
+     * @ORM\Column(name="deadline", type="datetime")
      */
     private $deadline;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="status", type="string", length=255)
+     * @ORM\Column(name="status", type="string", length=255, nullable=true)
      */
     private $status;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="attachment", type="string", length=255)
-     */
-    private $attachment;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="type", type="string", length=255)
-     */
-    private $type;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
+     * @ORM\ManyToMany(targetEntity="User")
+     * JoinTable(name="user",
+     *      joinColumns={@JoinColumn(name="user_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@JoinColumn(name="user_id", referencedColumnName="id")}
+     *      )
      */
     private $user;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Contract")
-     * @ORM\JoinColumn(name="contract_id", referencedColumnName="id")
+     * @var string
+     *
+     * @ORM\Column(name="attachment", type="string", length=255, nullable=true)
+     */
+    private $attachment;
+
+    /**
+     * @ORM\OneToOne(targetEntity="Contract", inversedBy="charge")
+     * @ORM\JoinColumn(name="contract_id", referencedColumnName="id", nullable=true)
      */
     private $contract;
 
     /**
-     * @ORM\OneToMany(targetEntity="Payment", mappedBy="charge")
+     * @ORM\OneToMany(targetEntity="Payment", mappedBy="charge", cascade={"all"})
      * @ORM\JoinColumn(name="payment_id", referencedColumnName="id")
      */
     private $payment;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Condominium")
+     * @ORM\JoinColumn(name="condominium_id", referencedColumnName="id")
+     */
+    private $condominium;
+
 
 
     /**
@@ -93,41 +99,33 @@ class Charge
     }
 
     /**
-     * Set name
+     * Set title
      *
-     * @param string $name
-     *
-     * @return Charge
+     * @param string title
      */
-    public function setName($name)
+    public function setTitle($title)
     {
-        $this->name = $name;
-
-        return $this;
+        $this->title = $title;
     }
 
     /**
-     * Get name
+     * Get title
      *
      * @return string
      */
-    public function getName()
+    public function getTitle()
     {
-        return $this->name;
+        return $this->title;
     }
 
     /**
      * Set amount
      *
      * @param float $amount
-     *
-     * @return Charge
      */
     public function setAmount($amount)
     {
         $this->amount = $amount;
-
-        return $this;
     }
 
     /**
@@ -144,14 +142,10 @@ class Charge
      * Set deadline
      *
      * @param \DateTime $deadline
-     *
-     * @return Charge
      */
     public function setDeadline($deadline)
     {
         $this->deadline = $deadline;
-
-        return $this;
     }
 
     /**
@@ -168,14 +162,10 @@ class Charge
      * Set status
      *
      * @param string $status
-     *
-     * @return Charge
      */
     public function setStatus($status)
     {
         $this->status = $status;
-
-        return $this;
     }
 
     /**
@@ -192,14 +182,10 @@ class Charge
      * Set attachment
      *
      * @param string $attachment
-     *
-     * @return Charge
      */
     public function setAttachment($attachment)
     {
         $this->attachment = $attachment;
-
-        return $this;
     }
 
     /**
@@ -216,14 +202,10 @@ class Charge
      * Set contract
      *
      * @param string $contract
-     *
-     * @return Charge
      */
     public function setContract($contract)
     {
         $this->contract = $contract;
-
-        return $this;
     }
 
     /**
@@ -253,19 +235,19 @@ class Charge
     }
 
     /**
-     * @return string
+     * @return mixed
      */
-    public function getType(): string
+    public function getCondominium()
     {
-        return $this->type;
+        return $this->condominium;
     }
 
     /**
-     * @param string $type
+     * @param mixed $condominium
      */
-    public function setType(string $type)
+    public function setCondominium($condominium)
     {
-        $this->type = $type;
+        $this->condominium = $condominium;
     }
 
     /**
@@ -276,14 +258,10 @@ class Charge
         return $this->payment;
     }
 
-    /**
-     * @param mixed $payment
-     */
-    public function setPayment($payment)
+    public function __toString()
     {
-        $this->payment = $payment;
+        return $this->id.' - '.$this->title;
     }
-
 
 }
 

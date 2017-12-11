@@ -3,17 +3,22 @@
 namespace App\DataFixtures;
 
 use App\Entity\Charge;
+use App\Entity\Payment;
+use App\Service\FakerService;
+use App\Service\PaymentService;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use Faker;
 
-class ChargeFixture extends Fixture
+class ChargeFixture extends Fixture implements OrderedFixtureInterface
 {
     private $faker;
+    private $paymentService;
 
-    public function __construct()
+    public function __construct(FakerService $faker, PaymentService $paymentService)
     {
-        $this->faker = Faker\Factory::create();
+        $this->faker = $faker;
+        $this->paymentService = $paymentService;
     }
 
     /**
@@ -23,13 +28,40 @@ class ChargeFixture extends Fixture
      */
     public function load(ObjectManager $manager)
     {
-
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 3; $i++) {
             $charge = new Charge();
-            $charge->setName('product '.$i);
+            $charge->setTitle('charge '.$i);
             $charge->setAmount(mt_rand(10, 1000));
-            $charge->setDeadline($this->faker->dateTime());
+            $charge->setDeadline($this->faker->generate()->dateTimeThisMonth);
+            $charge->setStatus('A payer');
+            $charge->setCondominium($this->getReference('condominium-fixture1'));
+
+            $listUser = [];
+            for ($j = 0 ; $j < 3 ; $j++) {
+                array_push($listUser, $this->getReference('user-fixture'.$j));
+            }
+            $charge->setUser($listUser);
+            foreach($listUser as $user) {
+                $payment = new Payment();
+                $payment->setUser($user);
+                $payment->setAmountTotal($charge->getAmount() / count($listUser));
+                $payment->setAmountPaid(0);
+                $payment->setType('VIREMENT BANCAIRE');
+                $payment->setCharge($charge);
+                $manager->persist($payment);
+            }
             $manager->persist($charge);
         }
+        $manager->flush();
+    }
+
+    /**
+     * Get the order of this fixture
+     *
+     * @return integer
+     */
+    public function getOrder()
+    {
+        return 3;
     }
 }

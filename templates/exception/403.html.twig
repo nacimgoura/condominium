@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accès interdit{% endblock %}
+
+{% block containerClass %}p-error-page p-error-page--403{% endblock %}
+
+{% block content %}
+    <div class="p-error-page__wrap">
+        <div class="p-error-page__error">
+            <h3 class="p-error-page__code">403</h3>
+            <div class="p-error-page__desc">Accès refusé</div>
+            <a href="/" class="btn btn-info p-error-page__home-link">Page d'accueil</a>
+        </div>
+        <div class="p-error-page__image-container">
+            <img src="img/access-denied.png" alt="" class="p-error-page__image embed-responsive">
+        </div>
+    </div>
+{% endblock %}

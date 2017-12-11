@@ -1,0 +1,22 @@
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajout d'une nouvelle conversation{% endblock %}
+
+{% block containerClass %}container-fh l-2column{% endblock %}
+
+{% block content %}
+    <div class="m-content m-content__hb">
+        <div class="m-content__header">
+            <h4 class="m-content__heading">Conversation</h4>
+        </div>
+        {{ form_start(form,  { 'action': action, 'attr': {'class': 'm-content__body', 'novalidate': 'novalidate'} } ) }}
+        {{ form_widget(form,  { 'attr': {'class': 'm-content__block'} } ) }}
+        {{ form_end(form) }}
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="https://cloud.tinymce.com/stable/tinymce.min.js"></script>
+    {{ parent() }}
+{% endblock %}

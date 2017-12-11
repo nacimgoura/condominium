@@ -3,15 +3,18 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Message
  *
  * @ORM\Table(name="message")
  * @ORM\Entity(repositoryClass="App\Repository\MessageRepository")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Message
 {
+
     /**
      * @var int
      *
@@ -23,26 +26,26 @@ class Message
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="content", type="string", length=255)
+     * @Assert\NotNull()
+     * @ORM\Column(name="content", type="text")
      */
     private $content;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="date", type="datetime")
+     * @ORM\Column(name="created_at", type="datetime")
      */
-    private $date;
+    private $createdAt;
 
     /**
-     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="message")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      */
     private $user;
 
     /**
-     * @ORM\OneToOne(targetEntity="Conversation")
+     * @ORM\ManyToOne(targetEntity="Conversation", inversedBy="message")
      * @ORM\JoinColumn(name="conversation_id", referencedColumnName="id")
      */
     private $conversation;
@@ -63,13 +66,10 @@ class Message
      *
      * @param string $content
      *
-     * @return Message
      */
     public function setContent($content)
     {
         $this->content = $content;
-
-        return $this;
     }
 
     /**
@@ -80,30 +80,6 @@ class Message
     public function getContent()
     {
         return $this->content;
-    }
-
-    /**
-     * Set date
-     *
-     * @param \DateTime $date
-     *
-     * @return Message
-     */
-    public function setDate($date)
-    {
-        $this->date = $date;
-
-        return $this;
-    }
-
-    /**
-     * Get date
-     *
-     * @return \DateTime
-     */
-    public function getDate()
-    {
-        return $this->date;
     }
 
     /**
@@ -138,7 +114,20 @@ class Message
         $this->conversation = $conversation;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
 
-
+    /**
+     * @ORM\PrePersist
+     */
+    public function setDefaultValue()
+    {
+        $this->createdAt = new \DateTime();
+    }
 }
 

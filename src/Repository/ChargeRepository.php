@@ -11,4 +11,15 @@ use Doctrine\ORM\EntityRepository;
  */
 class ChargeRepository extends EntityRepository
 {
+    /**
+     * all charge with expired date
+     * @return array
+     */
+    public function findAllExpired() {
+        return $this->createQueryBuilder('c')
+            ->where('c.deadline < :today')
+            ->setParameter('today', new \DateTime())
+            ->getQuery()
+            ->getResult();
+    }
 }

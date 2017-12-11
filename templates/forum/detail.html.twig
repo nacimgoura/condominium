@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block bodyClass %}blog_post_show{% endblock %}
+
+{% block content %}
+    <h1 class="post-title">{{ post.title }}</h1>
+
+    <p class="post-metadata">
+        <span class="metadata"><i class="iconfont iconfont-calendar"></i> {{ post.createdAt | date("d/m/y H:i:s") }}</span>
+        <span class="metadata"><i class="iconfont iconfont-user"></i> {{ post.user.getCompleteName() }}</span>
+    </p>
+
+    <div class="post-content">
+        {{ post.content | raw }}
+    </div>
+
+    {{ include('forum/_post_tags.html.twig') }}
+
+    <div id="post-add-comment" class="well">
+        {{ form_start(form,  { 'action': action, 'attr': {'class': 'm-content__body', 'novalidate': 'novalidate' } } ) }}
+        {{ form_widget(form,  { 'attr': {'class': 'm-content__block'} } ) }}
+        {{ form_end(form) }}
+    </div>
+
+    <hr>
+
+    <h3>
+        <i class="iconfont iconfont-comments" aria-hidden="true"></i> {{ post.message | length }} commentaires
+    </h3>
+
+    {% for comment in post.message %}
+        <div class="row post-comment">
+            <h4 class="col-sm-3">
+                <strong>{{ comment.user.getCompleteName() }}</strong>
+                commenté le
+                <strong>{{ comment.createdAt | date("d/m/y H:i:s") }}</strong>
+            </h4>
+            <div class="col-sm-9">
+                {{ comment.content | raw }}
+            </div>
+        </div>
+    {% else %}
+        <h2 class="text-center">Aucun commentaire publié!</h2>
+    {% endfor %}
+{% endblock %}
+
+{% block scripts %}
+    <script src="https://cloud.tinymce.com/stable/tinymce.min.js"></script>
+    {{ parent() }}
+{% endblock %}

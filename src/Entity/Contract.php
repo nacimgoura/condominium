@@ -24,19 +24,19 @@ class Contract
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="signatureDate", type="date")
+     * @ORM\Column(name="signatureDate", type="datetime")
      */
     private $signatureDate;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="deadline", type="date")
+     * @ORM\Column(name="deadline", type="datetime")
      */
     private $deadline;
 
     /**
-     * @ORM\OneToMany(targetEntity="Charge", mappedBy="contract")
+     * @ORM\OneToOne(targetEntity="Charge", mappedBy="contract")
      * @ORM\JoinColumn(name="charge_id", referencedColumnName="id")
      */
     private $charge;
@@ -56,14 +56,10 @@ class Contract
      * Set signatureDate
      *
      * @param \DateTime $signatureDate
-     *
-     * @return Contract
      */
     public function setSignatureDate($signatureDate)
     {
         $this->signatureDate = $signatureDate;
-
-        return $this;
     }
 
     /**
@@ -80,14 +76,10 @@ class Contract
      * Set deadline
      *
      * @param \DateTime $deadline
-     *
-     * @return Contract
      */
     public function setDeadline($deadline)
     {
         $this->deadline = $deadline;
-
-        return $this;
     }
 
     /**

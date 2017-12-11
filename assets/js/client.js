@@ -8,9 +8,12 @@
 
     $(document).ready(function() {
         sidebarNav();
+        select2();
         flatpickr();
         tooltips();
         sidebarCollapse();
+        editorHtml();
+        datatable();
     });
 
     // -------------------------------------------------------------------------------------------------
@@ -91,6 +94,29 @@
         }
     });
 
+
+    function select2() {
+        $('select').each(function () {
+            var options = {
+                placeholder: function() {
+                    var el = $(this);
+                    el.data('placeholder');
+                }
+            };
+
+            if (!$(this).is('[data-search-enable]')) {
+                options['minimumResultsForSearch'] = Infinity;
+            }
+
+            $(this).select2(options);
+        });
+
+        $('.select2').click(function(e) {
+            var el = $(this);
+            el.find('b').hide();
+        });
+    }
+
     function flatpickr() {
         $('.flatpickr').flatpickr({
             altInput: true
@@ -124,6 +150,62 @@
     $(document).on('collapse-sidebar', function () {
         toggleSidebar();
     });
+
+    function editorHtml() {
+        try {
+            tinymce.init({
+                selector: '.editor-html',
+                height: 200,
+                menubar: false,
+                plugins: [
+                    'advlist autolink lists link image charmap print preview anchor textcolor',
+                    'searchreplace visualblocks code fullscreen',
+                    'insertdatetime media table contextmenu paste code help'
+                ],
+                toolbar: 'insert | undo redo |  formatselect | bold italic backcolor  | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
+                content_css: [
+                    '//www.tinymce.com/css/codepen.min.css']
+            });
+        } catch (error) {
+
+        }
+    }
+
+    function datatable() {
+        if(!jQuery().DataTable) {
+            return;
+        }
+        var table = $('#datatable').DataTable({
+            lengthChange: false,
+            buttons: [
+                'print', 'excel', 'pdf', 'colvis'
+            ],
+            select: true,
+            language: {
+                processing:     "Traitement en cours...",
+                search:         "Rechercher&nbsp;:",
+                lengthMenu:    "Afficher _MENU_ &eacute;l&eacute;ments",
+                info:           "Affichage de l'&eacute;lement _START_ &agrave; _END_ sur _TOTAL_ &eacute;l&eacute;ments",
+                infoEmpty:      "Affichage de l'&eacute;lement 0 &agrave; 0 sur 0 &eacute;l&eacute;ments",
+                infoFiltered:   "(filtr&eacute; de _MAX_ &eacute;l&eacute;ments au total)",
+                infoPostFix:    "",
+                loadingRecords: "Chargement en cours...",
+                zeroRecords:    "Aucun &eacute;l&eacute;ment &agrave; afficher",
+                emptyTable:     "Aucune donnée disponible dans le tableau",
+                paginate: {
+                    first:      "Premier",
+                    previous:   "Pr&eacute;c&eacute;dent",
+                    next:       "Suivant",
+                    last:       "Dernier"
+                },
+                aria: {
+                    sortAscending:  ": activer pour trier la colonne par ordre croissant",
+                    sortDescending: ": activer pour trier la colonne par ordre décroissant"
+                }
+            }
+        });
+        table.buttons().container().appendTo('#datatable_wrapper .col-md-6:eq(0)');
+    }
 
     $('.textavatar').each(function () {
         $(this).textAvatar({

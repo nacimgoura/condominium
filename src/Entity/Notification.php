@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(name="notification")
  * @ORM\Entity(repositoryClass="App\Repository\NotificationRepository")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Notification
 {
@@ -38,12 +39,12 @@ class Notification
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="date", type="datetime")
+     * @ORM\Column(name="created_at", type="datetime")
      */
-    private $date;
+    private $createdAt;
 
     /**
-     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="notification")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      */
     private $user;
@@ -63,14 +64,10 @@ class Notification
      * Set message
      *
      * @param string $message
-     *
-     * @return Notification
      */
     public function setMessage($message)
     {
         $this->message = $message;
-
-        return $this;
     }
 
     /**
@@ -87,14 +84,10 @@ class Notification
      * Set content
      *
      * @param string $content
-     *
-     * @return Notification
      */
     public function setContent($content)
     {
         $this->content = $content;
-
-        return $this;
     }
 
     /**
@@ -108,27 +101,23 @@ class Notification
     }
 
     /**
-     * Set date
+     * Set $createdAt
      *
-     * @param \DateTime $date
-     *
-     * @return Notification
+     * @param \DateTime $createdAt
      */
-    public function setDate($date)
+    public function setCreatedAt($createdAt)
     {
-        $this->date = $date;
-
-        return $this;
+        $this->createdAt = $createdAt;
     }
 
     /**
-     * Get date
+     * Get $createdAt
      *
      * @return \DateTime
      */
-    public function getDate()
+    public function getCreatedAt()
     {
-        return $this->date;
+        return $this->createdAt;
     }
 
     /**
@@ -147,6 +136,12 @@ class Notification
         $this->user = $user;
     }
 
-
+    /**
+     * @ORM\PrePersist
+     */
+    public function setDefaultValue()
+    {
+        $this->createdAt = new \DateTime();
+    }
 }
 

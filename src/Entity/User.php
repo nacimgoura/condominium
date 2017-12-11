@@ -3,20 +3,22 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * User
  *
  * @ORM\Table(name="user")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\UserRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
+ * @UniqueEntity("email")
+ * @ORM\HasLifecycleCallbacks()
  */
 class User implements UserInterface, \Serializable
 {
 
     /**
-     * @var int
-     *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -24,79 +26,66 @@ class User implements UserInterface, \Serializable
     private $id;
 
     /**
-     * @var array
-     *
      * @ORM\Column(name="roles", type="array")
      */
     private $roles;
 
     /**
-     * @var string
-     *
      * @ORM\Column(name="firstname", type="string", length=255)
      */
     private $firstname;
 
     /**
-     * @var string
-     *
      * @ORM\Column(name="lastname", type="string", length=255)
      */
     private $lastname;
 
     /**
-     * @var string
-     *
      * @ORM\Column(name="username", type="string", length=255, unique=true)
      */
     private $username;
 
     /**
-     * @var string
-     *
      * @ORM\Column(name="email", type="string", length=255, unique=true)
      */
     private $email;
 
     /**
-     * @var string
-     *
      * @ORM\Column(name="password", type="string", length=255)
      */
     private $password;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Condominium")
+     * @ORM\Column(name="created_at", type="datetime")
+     */
+    protected $createdAt;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Condominium", inversedBy="user", cascade={"all"})
      * @ORM\JoinColumn(name="condominium_id", referencedColumnName="id")
      */
     private $condominium;
 
     /**
-     * @ORM\OneToMany(targetEntity="Payment", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="Payment", mappedBy="user", cascade={"all"})
      * @ORM\JoinColumn(name="payment_id", referencedColumnName="id")
      */
     private $payment;
 
     /**
-     * @ORM\OneToMany(targetEntity="Charge", mappedBy="user")
-     * @ORM\JoinColumn(name="charge_id", referencedColumnName="id")
-     */
-    private $charge;
-
-    /**
-     * @ORM\OneToMany(targetEntity="Notification", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="Notification", mappedBy="user", cascade={"all"})
      * @ORM\JoinColumn(name="notification_id", referencedColumnName="id")
      */
     private $notification;
 
     /**
-     * @ORM\OneToMany(targetEntity="Message", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="Message", mappedBy="user", cascade={"all"})
      * @ORM\JoinColumn(name="message_id", referencedColumnName="id")
      */
     private $message;
 
     /**
-     * @ORM\OneToMany(targetEntity="Conversation", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="Conversation", mappedBy="user", cascade={"all"})
      * @ORM\JoinColumn(name="conversation_id", referencedColumnName="id")
      */
     private $conversation;
@@ -115,14 +104,10 @@ class User implements UserInterface, \Serializable
      * Set firstname
      *
      * @param string $firstname
-     *
-     * @return User
      */
     public function setFirstname($firstname)
     {
         $this->firstname = $firstname;
-
-        return $this;
     }
 
     /**
@@ -139,14 +124,10 @@ class User implements UserInterface, \Serializable
      * Set lastname
      *
      * @param string $lastname
-     *
-     * @return User
      */
     public function setLastname($lastname)
     {
         $this->lastname = $lastname;
-
-        return $this;
     }
 
     /**
@@ -163,14 +144,10 @@ class User implements UserInterface, \Serializable
      * Set username
      *
      * @param string $username
-     *
-     * @return User
      */
     public function setUsername($username)
     {
         $this->username = $username;
-
-        return $this;
     }
 
     /**
@@ -187,7 +164,7 @@ class User implements UserInterface, \Serializable
     /**
      * @return string
      */
-    public function getEmail(): string
+    public function getEmail()
     {
         return $this->email;
     }
@@ -195,7 +172,7 @@ class User implements UserInterface, \Serializable
     /**
      * @param string $email
      */
-    public function setEmail(string $email): void
+    public function setEmail(string $email)
     {
         $this->email = $email;
     }
@@ -204,14 +181,10 @@ class User implements UserInterface, \Serializable
      * Set password
      *
      * @param string $password
-     *
-     * @return User
      */
     public function setPassword($password)
     {
         $this->password = $password;
-
-        return $this;
     }
 
     /**
@@ -249,43 +222,11 @@ class User implements UserInterface, \Serializable
     }
 
     /**
-     * @param mixed $payment
-     */
-    public function setPayment($payment)
-    {
-        $this->payment = $payment;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCharge()
-    {
-        return $this->charge;
-    }
-
-    /**
-     * @param mixed $charge
-     */
-    public function setCharge($charge)
-    {
-        $this->charge = $charge;
-    }
-
-    /**
      * @return mixed
      */
     public function getNotification()
     {
         return $this->notification;
-    }
-
-    /**
-     * @param mixed $notification
-     */
-    public function setNotification($notification)
-    {
-        $this->notification = $notification;
     }
 
     /**
@@ -297,14 +238,6 @@ class User implements UserInterface, \Serializable
     }
 
     /**
-     * @param mixed $message
-     */
-    public function setMessage($message)
-    {
-        $this->message = $message;
-    }
-
-    /**
      * @return mixed
      */
     public function getConversation()
@@ -313,12 +246,29 @@ class User implements UserInterface, \Serializable
     }
 
     /**
-     * @param mixed $conversation
+     * @return array
      */
-    public function setConversation($conversation)
+    public function getRoles()
     {
-        $this->conversation = $conversation;
+        return $this->roles;
     }
+
+    /**
+     * @param array $roles
+     */
+    public function setRoles(array $roles)
+    {
+        $this->roles = $roles;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
 
 
     /** @see \Serializable::serialize() */
@@ -342,14 +292,6 @@ class User implements UserInterface, \Serializable
     }
 
     /**
-     * @return array
-     */
-    public function getRoles()
-    {
-        return $this->roles;
-    }
-
-    /**
      * Returns the salt that was originally used to encode the password.
      *
      * This can return null if the password was not encoded using a salt.
@@ -370,6 +312,22 @@ class User implements UserInterface, \Serializable
     public function eraseCredentials()
     {
         // TODO: Implement eraseCredentials() method.
+    }
+
+    public function getCompleteName() {
+        return $this->firstname.' '.$this->lastname;
+    }
+
+    public function __toString() {
+        return $this->getCompleteName();
+    }
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function setDefaultValue()
+    {
+        $this->createdAt = new \DateTime();
     }
 }
 

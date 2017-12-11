@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ charge.title }}{% endblock %}
+
+{% block bodyClass %}container-fh l-2column{% endblock %}
+
+{% block content %}
+    <div class="m-content m-content__hb">
+        <div class="m-content__header">
+            <h4 class="m-content__heading">{{ charge.title }}</h4>
+        </div>
+        <div class="m-content__block">
+
+            <p class="row">
+                Nombre de personnes concernées : {{ charge.user | length }}
+            </p>
+            <p class="row">
+                Total à payer : {{ charge.amount | number_format(2, '.', ',') }} €
+            </p>
+
+            <hr>
+
+            <div class="row text-center">
+                <table class="table table-responsive table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Payeur</th>
+                        <th>Status</th>
+                        <th>Montant payé</th>
+                        <th>Montant restant</th>
+                        <th>Pièce jointe</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for payment in charge.payment %}
+                        {% if payment.user | length %}
+                            <tr>
+                                <td>{{ payment.user }}</td>
+                                <td>{{ payment.status }}</td>
+                                <td>{{ payment.amountPaid | number_format(2, '.', ',') }} €</td>
+                                <td>{{ payment.amountTotal | number_format(2, '.', ',') }} €</td>
+                                <td></td>
+                                <td>
+                                    <a href="{{ path('charge_pay', { 'id': charge.id }) }}" class="btn btn-success">Payer</a>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <hr>
+
+            <div class="row">
+                <a href="{{ path('charge_delete', { 'id': charge.id }) }}" class="btn btn-danger">Supprimer la charge</a>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

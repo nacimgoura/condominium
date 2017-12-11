@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(name="payment")
  * @ORM\Entity(repositoryClass="App\Repository\PaymentRepository")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Payment
 {
@@ -22,25 +23,38 @@ class Payment
     private $id;
 
     /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="date", type="date")
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="payment")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      */
-    private $date;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="attachment", type="string", length=255)
-     */
-    private $attachment;
+    private $user;
 
     /**
      * @var float
      *
-     * @ORM\Column(name="amount", type="float")
+     * @ORM\Column(name="amount_paid", type="float")
      */
-    private $amount;
+    private $amountPaid;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="amount_total", type="float")
+     */
+    private $amountTotal;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="created_at", type="datetime")
+     */
+    private $createdAt;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="attachment", type="string", length=255, nullable=true)
+     */
+    private $attachment;
 
     /**
      * @var string
@@ -50,13 +64,7 @@ class Payment
     private $type;
 
     /**
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
-     */
-    private $user;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="Charge")
+     * @ORM\ManyToOne(targetEntity="Charge", inversedBy="payment")
      * @ORM\JoinColumn(name="charge_id", referencedColumnName="id")
      */
     private $charge;
@@ -74,41 +82,33 @@ class Payment
     }
 
     /**
-     * Set date
+     * Set createdAt
      *
-     * @param \DateTime $date
-     *
-     * @return Payment
+     * @param \DateTime $createdAt
      */
-    public function setDate($date)
+    public function setCreatedAt($createdAt)
     {
-        $this->date = $date;
-
-        return $this;
+        $this->createdAt = $createdAt;
     }
 
     /**
-     * Get date
+     * Get createdAt
      *
      * @return \DateTime
      */
-    public function getDate()
+    public function getCreatedAt()
     {
-        return $this->date;
+        return $this->createdAt;
     }
 
     /**
      * Set attachment
      *
      * @param string $attachment
-     *
-     * @return Payment
      */
     public function setAttachment($attachment)
     {
         $this->attachment = $attachment;
-
-        return $this;
     }
 
     /**
@@ -122,41 +122,13 @@ class Payment
     }
 
     /**
-     * Set amount
-     *
-     * @param float $amount
-     *
-     * @return Payment
-     */
-    public function setAmount($amount)
-    {
-        $this->amount = $amount;
-
-        return $this;
-    }
-
-    /**
-     * Get amount
-     *
-     * @return float
-     */
-    public function getAmount()
-    {
-        return $this->amount;
-    }
-
-    /**
      * Set type
      *
      * @param string $type
-     *
-     * @return Payment
      */
     public function setType($type)
     {
         $this->type = $type;
-
-        return $this;
     }
 
     /**
@@ -167,6 +139,38 @@ class Payment
     public function getType()
     {
         return $this->type;
+    }
+
+    /**
+     * @return float
+     */
+    public function getAmountPaid()
+    {
+        return $this->amountPaid;
+    }
+
+    /**
+     * @param float $amountPaid
+     */
+    public function setAmountPaid(float $amountPaid)
+    {
+        $this->amountPaid = $amountPaid;
+    }
+
+    /**
+     * @return float
+     */
+    public function getAmountTotal()
+    {
+        return $this->amountTotal;
+    }
+
+    /**
+     * @param float $amountTotal
+     */
+    public function setAmountTotal(float $amountTotal)
+    {
+        $this->amountTotal = $amountTotal;
     }
 
     /**
@@ -201,6 +205,19 @@ class Payment
         $this->charge = $charge;
     }
 
+    public function getStatus() {
+        if ($this->amountPaid == $this->amountTotal) {
+            return 'Payé';
+        }
+        return 'En cours';
+    }
 
+    /**
+     * @ORM\PrePersist
+     */
+    public function setDefaultValue()
+    {
+        $this->createdAt = new \DateTime();
+    }
 }
 

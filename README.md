@@ -10,15 +10,5 @@
 
 ## Installation
 ```
-npm install
-composer
-docker-compose up
-```
-
-## Usage
-```
-docker-compose start
-php bin/console doctrine:fixtures:load
-npm run dev
-php bin/console server:run
+./install.sh
 ```
