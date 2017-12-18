@@ -10,9 +10,11 @@
         <div class="m-content__header">
             <h4 class="m-content__heading">Conversation</h4>
         </div>
-        {{ form_start(form,  { 'action': action, 'attr': {'class': 'm-content__body', 'novalidate': 'novalidate'} } ) }}
-        {{ form_widget(form,  { 'attr': {'class': 'm-content__block'} } ) }}
-        {{ form_end(form) }}
+        <div class="m-content__block">
+            {{ form_start(form,  { 'action': action, 'attr': {'class': 'm-content__body', 'novalidate': 'novalidate'} } ) }}
+            {{ form_widget(form,  { 'attr': {'class': 'm-content__block'} } ) }}
+            {{ form_end(form) }}
+        </div>
     </div>
 {% endblock %}
 

@@ -2,6 +2,7 @@
 .idea
 ###> symfony/framework-bundle ###
 .env
+/public/attachment/*
 /public/bundles/
 /public/build/
 /var/

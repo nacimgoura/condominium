@@ -10,7 +10,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @ORM\Table(name="message")
  * @ORM\Entity(repositoryClass="App\Repository\MessageRepository")
- * @ORM\HasLifecycleCallbacks()
  */
 class Message
 {
@@ -26,7 +25,7 @@ class Message
 
     /**
      * @var string
-     * @Assert\NotNull()
+     * @Assert\NotBlank()
      * @ORM\Column(name="content", type="text")
      */
     private $content;
@@ -50,6 +49,10 @@ class Message
      */
     private $conversation;
 
+    public function __construct()
+    {
+        $this->createdAt = new \DateTime();
+    }
 
     /**
      * Get id
@@ -122,12 +125,5 @@ class Message
         return $this->createdAt;
     }
 
-    /**
-     * @ORM\PrePersist
-     */
-    public function setDefaultValue()
-    {
-        $this->createdAt = new \DateTime();
-    }
 }
 

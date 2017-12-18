@@ -27,19 +27,19 @@ class Conversation
     private $id;
 
     /**
-     * @Assert\NotNull()
+     * @Assert\NotBlank()
      * @ORM\Column(name="title", type="string", length=255, unique=true)
      */
     private $title;
 
     /**
-     * @Assert\NotNull()
+     * @Assert\NotBlank()
      * @ORM\Column(name="description", type="string", length=255)
      */
     private $description;
 
     /**
-     * @Assert\NotNull()
+     * @Assert\NotBlank()
      * @ORM\Column(name="content", type="text")
      */
     private $content;
@@ -51,6 +51,7 @@ class Conversation
     private $user;
 
     /**
+     * @Assert\NotBlank()
      * @ORM\ManyToMany(targetEntity="User")
      * JoinTable(name="user",
      *      joinColumns={@JoinColumn(name="user_id", referencedColumnName="id")},
@@ -66,7 +67,7 @@ class Conversation
     private $message;
 
     /**
-     * @ORM\Column(name="tags", type="array")
+     * @ORM\Column(name="tags", type="array", nullable=true)
      */
     private $tags;
 
@@ -81,6 +82,22 @@ class Conversation
      * @ORM\Column(name="created_at", type="datetime")
      */
     private $createdAt;
+
+    /**
+     * @Assert\NotNull()
+     * @ORM\ManyToOne(targetEntity="Condominium")
+     * @ORM\JoinColumn(name="condominium_id", referencedColumnName="id")
+     */
+    private $condominium;
+
+
+
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTime();
+        $this->isArchived = false;
+    }
 
     /**
      * Get id
@@ -221,12 +238,19 @@ class Conversation
     }
 
     /**
-     * @ORM\PrePersist
+     * @return mixed
      */
-    public function setDefaultValue()
+    public function getCondominium()
     {
-        $this->createdAt = new \DateTime();
-        $this->isArchived = false;
+        return $this->condominium;
     }
-}
 
+    /**
+     * @param mixed $condominium
+     */
+    public function setCondominium($condominium): void
+    {
+        $this->condominium = $condominium;
+    }
+
+}

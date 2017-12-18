@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * User
@@ -13,7 +14,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\Table(name="user")
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @UniqueEntity("email")
- * @ORM\HasLifecycleCallbacks()
  */
 class User implements UserInterface, \Serializable
 {
@@ -26,26 +26,31 @@ class User implements UserInterface, \Serializable
     private $id;
 
     /**
+     * @Assert\NotBlank()
      * @ORM\Column(name="roles", type="array")
      */
     private $roles;
 
     /**
+     * @Assert\NotBlank()
      * @ORM\Column(name="firstname", type="string", length=255)
      */
     private $firstname;
 
     /**
+     * @Assert\NotBlank()
      * @ORM\Column(name="lastname", type="string", length=255)
      */
     private $lastname;
 
     /**
+     * @Assert\NotBlank()
      * @ORM\Column(name="username", type="string", length=255, unique=true)
      */
     private $username;
 
     /**
+     * @Assert\NotBlank()
      * @ORM\Column(name="email", type="string", length=255, unique=true)
      */
     private $email;
@@ -61,34 +66,40 @@ class User implements UserInterface, \Serializable
     protected $createdAt;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Condominium", inversedBy="user", cascade={"all"})
-     * @ORM\JoinColumn(name="condominium_id", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity="Condominium", inversedBy="user")
+     * @ORM\JoinColumn(name="condominium_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
      */
     private $condominium;
 
     /**
      * @ORM\OneToMany(targetEntity="Payment", mappedBy="user", cascade={"all"})
-     * @ORM\JoinColumn(name="payment_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="payment_id", referencedColumnName="id", nullable=true)
      */
     private $payment;
 
     /**
      * @ORM\OneToMany(targetEntity="Notification", mappedBy="user", cascade={"all"})
-     * @ORM\JoinColumn(name="notification_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="notification_id", referencedColumnName="id", nullable=true)
      */
     private $notification;
 
     /**
      * @ORM\OneToMany(targetEntity="Message", mappedBy="user", cascade={"all"})
-     * @ORM\JoinColumn(name="message_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="message_id", referencedColumnName="id", nullable=true)
      */
     private $message;
 
     /**
      * @ORM\OneToMany(targetEntity="Conversation", mappedBy="user", cascade={"all"})
-     * @ORM\JoinColumn(name="conversation_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="conversation_id", referencedColumnName="id", nullable=true)
      */
     private $conversation;
+
+    public function __construct()
+    {
+        $this->roles = ['ROLE_USER'];
+        $this->createdAt = new \DateTime();
+    }
 
     /**
      * Get id
@@ -269,8 +280,6 @@ class User implements UserInterface, \Serializable
         return $this->createdAt;
     }
 
-
-
     /** @see \Serializable::serialize() */
     public function serialize()
     {
@@ -320,14 +329,6 @@ class User implements UserInterface, \Serializable
 
     public function __toString() {
         return $this->getCompleteName();
-    }
-
-    /**
-     * @ORM\PrePersist
-     */
-    public function setDefaultValue()
-    {
-        $this->createdAt = new \DateTime();
     }
 }
 

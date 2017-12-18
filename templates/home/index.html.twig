@@ -3,23 +3,24 @@
 {% block title %}Accueil{% endblock %}
 
 {% block content %}
-        <h2 class="content-heading">Dashboard</h2>
+    <h2 class="content-heading">Dashboard</h2>
+    {% if user.condominium and condominium %}
         <div class="content-description">Bienvenue sur le site de la copropriété</div>
         <div class="row">
             <div class="col-xl-3 col-lg-3 col-md-6">
                 <div class="widget widget-alpha widget-alpha--color-amaranth">
                     <div>
-                        <div class="widget-alpha__amount">278</div>
-                        <div class="widget-alpha__description">New Projects</div>
+                        <div class="widget-alpha__amount">{{ user.condominium.title }}</div>
+                        <div class="widget-alpha__description">Copropriété</div>
                     </div>
-                    <span class="widget-alpha__icon iconfont iconfont-bag-outline"></span>
+                    <span class="widget-alpha__icon iconfont iconfont-home"></span>
                 </div>
             </div>
             <div class="col-xl-3 col-lg-3 col-md-6">
                 <div class="widget widget-alpha widget-alpha--color-green-jungle">
                     <div>
-                        <div class="widget-alpha__amount">156</div>
-                        <div class="widget-alpha__description">New Clients</div>
+                        <div class="widget-alpha__amount">{{ user.condominium.user | length }}</div>
+                        <div class="widget-alpha__description">Nombre de personnes</div>
                     </div>
                     <span class="widget-alpha__icon iconfont iconfont-user-outline"></span>
                 </div>
@@ -27,20 +28,56 @@
             <div class="col-xl-3 col-lg-3 col-md-6">
                 <div class="widget widget-alpha widget-alpha--color-orange widget-alpha--donut">
                     <div>
-                        <div class="widget-alpha__amount">64,87%</div>
-                        <div class="widget-alpha__description">Conversion Rate</div>
+                        <div class="widget-alpha__amount"></div>
+                        <div class="widget-alpha__description">Vos payements</div>
                     </div>
                     <span class="widget-alpha__icon iconfont iconfont-chart-donut-outline"></span>
                 </div>
             </div>
-            <div class="col-xl-3 col-lg-3 col-md-6">
-                <div class="widget widget-alpha widget-alpha--color-java widget-alpha--help">
+        </div>
+
+        <div class="row">
+            <div class="widget widget-controls widget-table widget-summary">
+                <div class="widget-controls__header">
                     <div>
-                        <div class="widget-alpha__amount">425</div>
-                        <div class="widget-alpha__description">Support Tickets</div>
+                        Personne de cette résidence
                     </div>
-                    <span class="widget-alpha__icon iconfont iconfont-help-outline"></span>
+                </div>
+                <div class="widget-controls__content js-scrollable">
+                    <div class="simplebar-scroll-content" style="padding-right: 20px; margin-bottom: -20px;">
+                        <div class="simplebar-content" style="padding-bottom: 20px;">
+                            <table class="table table-no-border table-striped">
+                                <thead>
+                                <tr>
+                                    <th>Nom complet</th>
+                                    <th>Nom</th>
+                                    <th>Prénom</th>
+                                    <th>Mail</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for proprio in condominium.user %}
+                                    <tr>
+                                        <td>
+                                            {{ proprio.getCompleteName() }}
+                                            {% if condominium.manager and proprio.id == condominium.manager.id %}
+                                                (manager)
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ proprio.lastname }}</td>
+                                        <td>{{ proprio.firstname }}</td>
+                                        <td>{{ proprio.email }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+    {% else %}
+        <div class="content-description">Bienvenue administrateur</div>
+    {% endif %}
+
 {% endblock %}

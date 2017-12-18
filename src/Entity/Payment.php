@@ -3,6 +3,9 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\PostRemove;
+use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Payment
@@ -205,19 +208,24 @@ class Payment
         $this->charge = $charge;
     }
 
-    public function getStatus() {
-        if ($this->amountPaid == $this->amountTotal) {
-            return 'Payé';
-        }
-        return 'En cours';
-    }
-
     /**
      * @ORM\PrePersist
      */
     public function setDefaultValue()
     {
         $this->createdAt = new \DateTime();
+    }
+
+    /**
+     * @PostRemove
+     */
+    public function deleteAttachment() {
+        try {
+            $fs = new Filesystem();
+            $fs->remove('attachment/'.$this->attachment);
+        } catch (IOExceptionInterface $e) {
+            echo "An error occurred while creating your directory at ".$e->getPath();
+        }
     }
 }
 

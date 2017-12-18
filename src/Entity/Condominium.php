@@ -4,13 +4,14 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Condominium
  *
  * @ORM\Table(name="condominium")
  * @ORM\Entity(repositoryClass="App\Repository\CondominiumRepository")
- * @UniqueEntity("title")
+ * @UniqueEntity("title, manager_id")
  */
 class Condominium
 {
@@ -26,14 +27,21 @@ class Condominium
     /**
      * @var string
      *
+     * @Assert\NotBlank()
      * @ORM\Column(name="title", type="string", length=255, unique=true)
      */
     private $title;
 
     /**
-     * @ORM\OneToMany(targetEntity="User", mappedBy="condominium")
+     * @ORM\OneToMany(targetEntity="User", mappedBy="condominium", cascade={"all"})
      */
     private $user;
+
+    /**
+     * @ORM\OneToOne(targetEntity="User")
+     * @ORM\JoinColumn(name="manager_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+     */
+    private $manager;
 
 
     /**
@@ -82,6 +90,26 @@ class Condominium
         $this->user = $user;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getManager()
+    {
+        return $this->manager;
+    }
+
+    /**
+     * @param mixed $manager
+     */
+    public function setManager($manager)
+    {
+        $this->manager = $manager;
+    }
+
+    public function __toString()
+    {
+        return $this->title;
+    }
 
 }
 

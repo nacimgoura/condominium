@@ -25,21 +25,31 @@ class ForumFixture extends Fixture implements OrderedFixtureInterface
      */
     public function load(ObjectManager $manager)
     {
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i <= 10; $i++) {
             $conversation = new Conversation();
             $conversation->setTitle($this->faker->generate()->sentence);
             $conversation->setDescription($this->faker->generate()->text);
             $conversation->setContent($this->faker->generate()->text(2500));
-            $conversation->setTags(['test', 'genial', 'refund']);
+            $conversation->setTags(['test', 'genial', 'facture']);
             $conversation->setUser($this->getReference('user-fixture'.$i));
+            if ($i <= 5) {
+                $conversation->setCondominium($this->getReference('condominium-fixture1'));
+            } else {
+                $conversation->setCondominium($this->getReference('condominium-fixture2'));
+            }
 
-            for ($j = 0; $j < 5; $j++) {
+            $listUser = [];
+            for ($j = 0; $j <= 5; $j++) {
+                if ($i < 3) {
+                    array_push($listUser, $this->getReference('user-fixture'.$j));
+                }
                 $message = new Message();
                 $message->setContent($this->faker->generate()->text);
                 $message->setUser($this->getReference('user-fixture'.$j));
                 $message->setConversation($conversation);
                 $manager->persist($message);
             }
+            $conversation->setAuthorizedUser($listUser);
             $manager->persist($conversation);
         }
 

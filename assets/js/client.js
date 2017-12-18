@@ -119,7 +119,9 @@
 
     function flatpickr() {
         $('.flatpickr').flatpickr({
-            altInput: true
+            enableTime: true,
+            altInput: true,
+            minDate: new Date()
         });
     }
 
@@ -129,12 +131,6 @@
 
     function toggleSidebar() {
         $('body').toggleClass('sidebar-sm');
-
-        if ($('body').hasClass('sidebar-sm')) {
-            initSidebarScrollbar(false);
-        } else {
-            initSidebarScrollbar(true);
-        }
 
         setTimeout(function () {
             $(document).trigger('recalculate-sidebar-scroll');

@@ -33,7 +33,6 @@ class ChargeFixture extends Fixture implements OrderedFixtureInterface
             $charge->setTitle('charge '.$i);
             $charge->setAmount(mt_rand(10, 1000));
             $charge->setDeadline($this->faker->generate()->dateTimeThisMonth);
-            $charge->setStatus('A payer');
             $charge->setCondominium($this->getReference('condominium-fixture1'));
 
             $listUser = [];
@@ -41,15 +40,7 @@ class ChargeFixture extends Fixture implements OrderedFixtureInterface
                 array_push($listUser, $this->getReference('user-fixture'.$j));
             }
             $charge->setUser($listUser);
-            foreach($listUser as $user) {
-                $payment = new Payment();
-                $payment->setUser($user);
-                $payment->setAmountTotal($charge->getAmount() / count($listUser));
-                $payment->setAmountPaid(0);
-                $payment->setType('VIREMENT BANCAIRE');
-                $payment->setCharge($charge);
-                $manager->persist($payment);
-            }
+            $this->paymentService->generate($charge);
             $manager->persist($charge);
         }
         $manager->flush();

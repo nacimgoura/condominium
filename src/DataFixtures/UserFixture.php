@@ -35,7 +35,7 @@ class UserFixture extends Fixture implements OrderedFixtureInterface
         $admin->setEmail('admin@gmail.com');
         $admin->setFirstname('admin');
         $admin->setLastname('admin');
-        $admin->setRoles(['ROLE_USER', 'ROLE_ADMIN', 'ROLE_MANAGER']);
+        $admin->setRoles(['ROLE_ADMIN']);
         $admin->setPassword($this->encoder->encodePassword($admin, 'admin'));
         $manager->persist($admin);
 
@@ -47,11 +47,13 @@ class UserFixture extends Fixture implements OrderedFixtureInterface
         $user_manager->setLastname('Goura');
         $user_manager->setPassword($this->encoder->encodePassword($user_manager, 'nacim'));
         $user_manager->setRoles(['ROLE_USER', 'ROLE_MANAGER']);
+        $user_manager->setCondominium($this->getReference('condominium-fixture1'));
         $manager->persist($user_manager);
 
+        $this->getReference('condominium-fixture1')->setManager($user_manager);
         $this->addReference('user-fixture-manager', $user_manager);
 
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i <= 10; $i++) {
             $user = new User();
             $user->setUsername($this->faker->generate()->userName);
             $user->setEmail($this->faker->generate()->email);
@@ -65,6 +67,10 @@ class UserFixture extends Fixture implements OrderedFixtureInterface
             }
             if ($i > 5) {
                 $user->setCondominium($this->getReference('condominium-fixture2'));
+            }
+            if($i == 10) {
+                $user->setRoles(['ROLE_USER', 'ROLE_MANAGER']);
+                $this->getReference('condominium-fixture2')->setManager($user);
             }
             $manager->persist($user);
         }

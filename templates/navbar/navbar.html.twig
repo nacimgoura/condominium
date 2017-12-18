@@ -48,10 +48,10 @@
                         <div class="navbar-dropdown-user-content">
                             <div class="dropdown-user__avatar"><img src="/img/user.png" alt=""/></div>
                             <div class="dropdown-info">
-                                <div class="dropdown-info__name">{{ app.user.username }}</div>
+                                <div class="dropdown-info__name">{{ app.user }}</div>
                                 <div class="dropdown-info__job">Utilisateur</div>
                                 <div class="dropdown-info-buttons">
-                                    <a class="dropdown-info__viewprofile" href="#">
+                                    <a class="dropdown-info__viewprofile" href="{{ path('account_index') }}">
                                         View Profile
                                     </a>
                                 </div>

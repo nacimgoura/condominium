@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des copropriétés{% endblock %}
+
+{% block styles %}
+    {{ parent() }}
+    <link rel="stylesheet" href="/css/datatables.min.css"/>
+{% endblock %}
+
+{% block content %}
+    <h2 class="content-heading">
+        Liste des utilisateurs<span class="m-datagrid__header-items-amount">({{ listCondominium | length }})</span>
+    </h2>
+    <div class="m-datatable">
+        <a href="#" class="btn btn-info">
+            Ajouter une copropriété
+        </a>
+
+        <hr>
+
+        <table id="datatable" class="table table-striped">
+            <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Manager</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for condominium in listCondominium %}
+                <tr>
+                    <td>{{ condominium.title }}</td>
+                    <td>{{ condominium.manager.getCompleteName() }}</td>
+                    <td>
+                        <a class="btn btn-danger" href="{{ path('admin_delete_condominium', {'id': condominium.id}) }}">Supprimer</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ parent() }}
+    <script src="/js/datatables.min.js"></script>
+{% endblock %}

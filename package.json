@@ -1,6 +1,11 @@
 {
     "license": "UNLICENSED",
     "private": true,
+    "author": {
+        "name": "Nacim Goura",
+        "email": "nacim.goura.dev@gmail.com",
+        "url": "nacimgoura.fr"
+    },
     "scripts": {
         "dev-server": "encore dev-server",
         "dev": "encore dev",

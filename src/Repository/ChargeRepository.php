@@ -2,7 +2,9 @@
 
 namespace App\Repository;
 
+use App\Entity\User;
 use Doctrine\ORM\EntityRepository;
+
 /**
  * ChargeRepository
  *
@@ -19,6 +21,28 @@ class ChargeRepository extends EntityRepository
         return $this->createQueryBuilder('c')
             ->where('c.deadline < :today')
             ->setParameter('today', new \DateTime())
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findOwnCharge(User $user) {
+        if ($user->getUsername() == 'admin') {
+            return $this->createQueryBuilder('c')
+                ->getQuery()
+                ->getResult();
+        } else if (in_array('ROLE_MANAGER', $user->getRoles())) {
+            return $this->createQueryBuilder('c')
+                ->join('c.user', 'u')
+                ->where('c.condominium = :condominium')
+                ->setParameter('condominium', $user->getCondominium()->getId())
+                ->getQuery()
+                ->getResult();
+        }
+        return $this->createQueryBuilder('c')
+            ->join('c.user', 'u')
+            ->where('u.id = :user AND c.condominium = :condominium')
+            ->setParameter('user', $user->getId())
+            ->setParameter('condominium', $user->getCondominium()->getId())
             ->getQuery()
             ->getResult();
     }

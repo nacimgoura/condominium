@@ -3,46 +3,52 @@
         <div>
             <ul class="sidebar-nav">
                 <li class="sidebar-nav__item">
-                    <a class="sidebar-nav__link" href="/">
+                    <a class="sidebar-nav__link" href="{{ path('home_index') }}">
                         <span class="sidebar-nav__item_icon iconfont iconfont-home"></span>
                         <span class="sidebar-nav__item-text">Accueil</span>
                     </a>
                 </li>
                 <li class="sidebar-nav__item">
-                    <a class="sidebar-nav__link" href="/forum">
+                    <a class="sidebar-nav__link" href="{{ path('forum_index') }}">
                         <span class="sidebar-nav__item_icon iconfont iconfont-comments"></span>
                         <span class="sidebar-nav__item-text">Forum</span>
                     </a>
                 </li>
                 <li class="sidebar-nav__item">
-                    <a class="sidebar-nav__link" href="/charge">
+                    <a class="sidebar-nav__link" href="{{ path('charge_index') }}">
                         <span class="sidebar-nav__item_icon iconfont iconfont-ui"></span>
                         <span class="sidebar-nav__item-text">Charges</span>
                     </a>
                 </li>
                 <li class="sidebar-nav__item">
-                    <a class="sidebar-nav__link" href="/contract">
+                    <a class="sidebar-nav__link" href="{{ path('contract_index') }}">
                         <span class="sidebar-nav__item_icon iconfont iconfont-input"></span>
                         <span class="sidebar-nav__item-text">Contrats</span>
                     </a>
                 </li>
                 <li class="sidebar-nav__item">
-                    <a class="sidebar-nav__link" href="/project">
+                    <a class="sidebar-nav__link" href="{{ path('project_index') }}">
                         <span class="sidebar-nav__item_icon iconfont iconfont-component"></span>
                         <span class="sidebar-nav__item-text">Projets</span>
                     </a>
                 </li>
                 <li class="sidebar-nav__item">
-                    <a class="sidebar-nav__link" href="/meeting">
+                    <a class="sidebar-nav__link" href="{{ path('meeting_index') }}">
                         <span class="sidebar-nav__item_icon iconfont iconfont-users-group"></span>
                         <span class="sidebar-nav__item-text">Réunions</span>
                     </a>
                 </li>
                 {% if is_granted('ROLE_ADMIN') %}
                     <li class="sidebar-nav__item">
-                        <a class="sidebar-nav__link" href="/admin/user">
+                        <a class="sidebar-nav__link" href="{{ path('admin_gestion_user') }}">
                             <span class="sidebar-nav__item_icon iconfont iconfont-user"></span>
                             <span class="sidebar-nav__item-text">Utilisateurs</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-nav__item">
+                        <a class="sidebar-nav__link" href="{{ path('admin_gestion_condominium') }}">
+                            <span class="sidebar-nav__item_icon iconfont iconfont-pages"></span>
+                            <span class="sidebar-nav__item-text">Copropriété</span>
                         </a>
                     </li>
                 {% endif %}

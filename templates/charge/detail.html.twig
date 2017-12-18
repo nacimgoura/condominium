@@ -2,12 +2,12 @@
 
 {% block title %}{{ charge.title }}{% endblock %}
 
-{% block bodyClass %}container-fh l-2column{% endblock %}
+{% block bodyClass %}container-fh{% endblock %}
 
 {% block content %}
     <div class="m-content m-content__hb">
         <div class="m-content__header">
-            <h4 class="m-content__heading">{{ charge.title }}</h4>
+            <h4 class="m-content__heading">{{ charge.title }} - {{ charge.condominium.title }}</h4>
         </div>
         <div class="m-content__block">
 
@@ -18,6 +18,12 @@
                 Total à payer : {{ charge.amount | number_format(2, '.', ',') }} €
             </p>
 
+            {% if charge.attachment %}
+                <p class="row">
+                    <a href="{{ asset('attachment/' ~ charge.attachment) }}" target="_blank" class="link-info">Pièce jointe</a>
+                </p>
+            {% endif %}
+
             <hr>
 
             <div class="row text-center">
@@ -27,7 +33,7 @@
                         <th>Payeur</th>
                         <th>Status</th>
                         <th>Montant payé</th>
-                        <th>Montant restant</th>
+                        <th>Montant total</th>
                         <th>Pièce jointe</th>
                         <th>Action</th>
                     </tr>
@@ -37,12 +43,24 @@
                         {% if payment.user | length %}
                             <tr>
                                 <td>{{ payment.user }}</td>
-                                <td>{{ payment.status }}</td>
+                                <td>
+                                    {% if (payment.amountPaid | number_format(2, '.', ',')) == (payment.amountTotal | number_format(2, '.', ',')) %}
+                                        <span class="badge badge-success">Payé</span>
+                                    {% else %}
+                                        <span class="badge badge-warning">En cours</span>
+                                    {% endif %}
+                                </td>
                                 <td>{{ payment.amountPaid | number_format(2, '.', ',') }} €</td>
                                 <td>{{ payment.amountTotal | number_format(2, '.', ',') }} €</td>
-                                <td></td>
                                 <td>
-                                    <a href="{{ path('charge_pay', { 'id': charge.id }) }}" class="btn btn-success">Payer</a>
+                                    {% if payment.attachment %}
+                                        <a href="{{ asset('attachment/' ~ payment.attachment) }}" target="_blank" class="link-info">Voir</a>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if payment.user.username == app.user.username and (payment.amountPaid | number_format(2, '.', ',')) != (payment.amountTotal | number_format(2, '.', ','))  %}
+                                        <a href="{{ path('charge_pay', { 'id': charge.id }) }}" class="btn btn-success">Payer</a>
+                                    {% endif %}
                                 </td>
                             </tr>
                         {% endif %}
@@ -53,9 +71,11 @@
 
             <hr>
 
-            <div class="row">
+            <a class="btn btn-primary" href="{{ path('charge_index') }}">Retourner à la liste des charges</a>
+
+            {% if is_granted('ROLE_ADMIN') %}
                 <a href="{{ path('charge_delete', { 'id': charge.id }) }}" class="btn btn-danger">Supprimer la charge</a>
-            </div>
+            {% endif %}
         </div>
     </div>
 

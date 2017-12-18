@@ -23,6 +23,12 @@ class ConversationRepository extends EntityRepository
                 ->orderBy('c.createdAt', 'DESC')
                 ->getQuery()
                 ->getResult();
+        } else if (in_array('ROLE_MANAGER', $user->getRoles())) {
+            return $this->createQueryBuilder('c')
+                ->where('c.condominium = :condominium')
+                ->setParameter('condominium', $user->getCondominium()->getId())
+                ->getQuery()
+                ->getResult();
         }
         return $this->createQueryBuilder('c')
             ->join('c.authorizedUser', 'au')

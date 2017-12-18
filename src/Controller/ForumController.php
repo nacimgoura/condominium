@@ -29,6 +29,24 @@ class ForumController extends Controller
     }
 
     /**
+     * @Route("/forum/archived", name="forum_show_archived")
+     */
+    public function showArchived() {
+
+        $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');
+
+        $listPost = $this->getDoctrine()
+            ->getRepository(Conversation::class)
+            ->findBy([
+                'isArchived' => true
+            ]);
+
+        return $this->render('forum/list_archived.html.twig', [
+            'listPost' => $listPost
+        ]);
+    }
+
+    /**
      * @Route("/forum/post/{id}", requirements={"id" = "\d+"}, name="forum_index_detail")
      * @param $id
      * @param Request $request
@@ -75,9 +93,12 @@ class ForumController extends Controller
             ->getRepository(User::class)
             ->findAllExceptAdminAndUs($this->getUser()->getUsername());
 
+        // le post sera visible par le créateur et ceux qu'il autorise
+        array_push($listUser, $this->getUser());
         $post->setAuthorizedUser($listUser);
+        $post->setCondominium($this->getUser()->getCondominium());
 
-        $form = $this->createForm(ConversationType::class, $post);
+        $form = $this->createForm(ConversationType::class, $post, ['user' => $this->getUser()]);
 
         $form->handleRequest($request);
 
@@ -89,6 +110,11 @@ class ForumController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($post);
             $em->flush();
+
+            $this->addFlash(
+                'success',
+                'Conversation ajouté avec succès!'
+            );
 
             return $this->redirectToRoute('forum_index');
         }
@@ -106,6 +132,8 @@ class ForumController extends Controller
      */
     public function archivePost($id) {
 
+        $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');
+
         $em = $this->getDoctrine()->getManager();
         $post = $em->getRepository(Conversation::class)->find($id);
 
@@ -121,11 +149,37 @@ class ForumController extends Controller
     }
 
     /**
+     * @Route("/forum/post/desarchive/{id}", name="forum_desarchive_post")
+     * @param $id
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function desarchivePost($id) {
+
+        $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');
+
+        $em = $this->getDoctrine()->getManager();
+        $post = $em->getRepository(Conversation::class)->find($id);
+
+        $post->setIsArchived(false);
+        $em->flush();
+
+        $this->addFlash(
+            'success',
+            'Conversation désarchivée avec succès!'
+        );
+
+        return $this->redirectToRoute('forum_show_archived');
+    }
+
+    /**
      * @Route("/forum/post/delete/{id}", name="forum_delete_post")
      * @param $id
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function deletePost($id) {
+
+        $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');
+
         $em = $this->getDoctrine()->getManager();
         $post = $em->getRepository(Conversation::class)->find($id);
 

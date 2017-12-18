@@ -5,6 +5,9 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Charge
@@ -12,9 +15,11 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\Table(name="charge")
  * @ORM\Entity(repositoryClass="App\Repository\ChargeRepository")
  * @UniqueEntity("title")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Charge
 {
+
     /**
      * @var int
      *
@@ -27,6 +32,7 @@ class Charge
     /**
      * @var string
      *
+     * @Assert\NotBlank()
      * @ORM\Column(name="title", type="string", length=255)
      */
     private $title;
@@ -34,25 +40,23 @@ class Charge
     /**
      * @var float
      *
+     * @Assert\Type("numeric")
+     * @Assert\Range(
+     *      min = 0
+     * )
      * @ORM\Column(name="amount", type="float")
      */
     private $amount;
 
     /**
      * @var \DateTime
-     *
+     * @Assert\NotNull()
      * @ORM\Column(name="deadline", type="datetime")
      */
     private $deadline;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="status", type="string", length=255, nullable=true)
-     */
-    private $status;
-
-    /**
+     * @Assert\NotNull()
      * @ORM\ManyToMany(targetEntity="User")
      * JoinTable(name="user",
      *      joinColumns={@JoinColumn(name="user_id", referencedColumnName="id")},
@@ -63,7 +67,9 @@ class Charge
 
     /**
      * @var string
-     *
+     * @Assert\File(
+     *     maxSize = "2048k"
+     * )
      * @ORM\Column(name="attachment", type="string", length=255, nullable=true)
      */
     private $attachment;
@@ -81,6 +87,7 @@ class Charge
     private $payment;
 
     /**
+     * @Assert\NotNull()
      * @ORM\ManyToOne(targetEntity="Condominium")
      * @ORM\JoinColumn(name="condominium_id", referencedColumnName="id")
      */
@@ -159,23 +166,22 @@ class Charge
     }
 
     /**
-     * Set status
-     *
-     * @param string $status
-     */
-    public function setStatus($status)
-    {
-        $this->status = $status;
-    }
-
-    /**
      * Get status
      *
      * @return string
      */
     public function getStatus()
     {
-        return $this->status;
+        $sumPayment = 0;
+        if ($this->payment) {
+            foreach ($this->payment as $item) {
+                $sumPayment+= $item->getAmountPaid();
+            }
+            if (number_format($sumPayment) == $this->amount) {
+                return 'Fini';
+            }
+        }
+        return 'En cours';
     }
 
     /**
@@ -261,6 +267,18 @@ class Charge
     public function __toString()
     {
         return $this->id.' - '.$this->title;
+    }
+
+    /**
+     * @ORM\PostRemove
+     */
+    public function deleteAttachment() {
+        try {
+            $fs = new Filesystem();
+            $fs->remove('attachment/'.$this->attachment);
+        } catch (IOExceptionInterface $e) {
+            echo "An error occurred while creating your directory at ".$e->getPath();
+        }
     }
 
 }

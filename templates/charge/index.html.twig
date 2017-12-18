@@ -8,50 +8,69 @@
 {% endblock %}
 
 {% block content %}
-        <h2 class="content-heading">
-            Liste des charges<span class="m-datagrid__header-items-amount">({{ listCharge | length }})</span>
-        </h2>
-        <div class="m-datatable">
-            <table id="datatable" class="table table-striped">
-                <thead>
+    <h2 class="content-heading">
+        Liste des charges<span class="m-datagrid__header-items-amount">({{ listCharge | length }})</span>
+    </h2>
+    <div class="m-datatable">
+
+        {% if is_granted('ROLE_MANAGER') %}
+            <a href="{{ path('charge_add') }}" class="btn btn-info">
+                Ajouter une charge
+            </a>
+        {% endif %}
+
+        <hr>
+
+        <table id="datatable" class="table table-striped">
+            <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Personnes concernées</th>
+                <th>Résidence</th>
+                <th>Status</th>
+                <th>Date d'échéance</th>
+                <th>Montant</th>
+                <th>Pièce jointe</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for charge in listCharge %}
                 <tr>
-                    <th>Nom</th>
-                    <th>Personnes concernées</th>
-                    <th>Status</th>
-                    <th>Date d'échéance</th>
-                    <th>Montant</th>
-                    <th>Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for charge in listCharge %}
-                    <tr>
-                        <td>{{ charge.title }}</td>
-                        <td>{{ charge.user | join(', ') }}</td>
-                        <td>
-                            {% if charge.status == 'A payer' %}
-                                <span class="badge badge-warning">
+                    <td>{{ charge.title }}</td>
+                    <td>{{ charge.user | join(', ') }}</td>
+                    <td>{{ charge.condominium.title }}</td>
+                    <td>
+                        {% if charge.status == 'En cours' %}
+                        <span class="badge badge-warning">
                             {% else %}
-                                <span class="badge badge-success">
+                            <span class="badge badge-success">
                             {% endif %}
                                 {{ charge.status }}
                                 </span>
-                        </td>
-                        <td>{{ charge.deadline | date("d/m/y") }}</td>
-                        <td>{{ charge.amount }} €</td>
-                        <td>
-                            <a href="{{ path('charge_detail', {'id': charge.id}) }}" class="btn btn-info">
-                                Détail
-                            </a>
+                    </td>
+                    <td>{{ charge.deadline | date("d/m/y") }}</td>
+                    <td>{{ charge.amount }} €</td>
+                    <td>
+                        {% if charge.attachment %}
+                            <a href="{{ asset('attachment/' ~ charge.attachment) }}" target="_blank" class="link-info">Voir</a>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{{ path('charge_detail', {'id': charge.id}) }}" class="btn btn-info">
+                            Détail
+                        </a>
+                        {% if is_granted(['ROLE_MANAGER', 'ROLE_ADMIN']) %}
                             <a href="{{ path('charge_delete', {'id': charge.id}) }}" class="btn btn-danger">
                                 Supprimer
                             </a>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}
 
 {% block scripts %}

@@ -8,11 +8,13 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
-use App\Entity\User;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ConversationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options){
+
+        $user = $options['user'];
 
         $builder
             ->add('title', null, ['label' => 'Titre'])
@@ -22,10 +24,10 @@ class ConversationType extends AbstractType
             ]])
             ->add('authorized_user', EntityType::class, [
                 'class' => 'App\Entity\User',
-                'query_builder' => function (EntityRepository $er) {
+                'query_builder' => function (EntityRepository $er) use ($user) {
                     return $er->createQueryBuilder('u')
-                        ->where('u.username != :admin')
-                        ->setParameter('admin', 'admin')
+                        ->where("u.username != 'admin' AND u.condominium = :id")
+                        ->setParameter('id', $user->getCondominium()->getId())
                         ->orderBy('u.username', 'ASC');
                 },
                 'label' => 'Utilisateur autorisé à voir',
@@ -34,5 +36,9 @@ class ConversationType extends AbstractType
             ->add('save', SubmitType::class, ['label' => 'Valider', 'attr' => [
                 'class' => 'btn-success'
             ]]);
+    }
+
+    public function configureOptions(OptionsResolver $resolver) {
+        $resolver->setDefaults(['user' => null]);
     }
 }

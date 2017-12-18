@@ -25,6 +25,7 @@
                     <th>Nom</th>
                     <th>Email</th>
                     <th>Date d'inscription</th>
+                    <th>Copropriété</th>
                     <th>Rôles</th>
                     <th>Action</th>
                 </tr>
@@ -36,11 +37,12 @@
                         <td>{{ user.getCompleteName() }}</td>
                         <td>{{ user.email }}</td>
                         <td>{{ user.createdAt | date("d/m/y")  }}</td>
+                        <td>{{ user.condominium.title }}</td>
                         <td>{{ user.roles | join(' | ') }}</td>
                         <td>
-                            <a class="btn btn-primary" href="{{ path('home', {'_switch_user': user.username}) }}">Voir</a>
-                            <a class="btn btn-warning" href="/admin/user/edit/{{ user.id }}">Editer</a>
-                            <a class="btn btn-danger" href="/admin/user/delete/{{ user.id }}">Supprimer</a>
+                            <a class="btn btn-primary" href="{{ path('home_index', {'_switch_user': user.username}) }}">Voir</a>
+                            <a class="btn btn-warning" href="{{ path('admin_edit_user', {'id': user.id}) }}">Editer</a>
+                            <a class="btn btn-danger" href="{{ path('admin_delete_user', {'id': user.id}) }}">Supprimer</a>
                         </td>
                     </tr>
                 {% endfor %}

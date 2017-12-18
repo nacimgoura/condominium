@@ -2,15 +2,27 @@
 
 {% block title %}Payement{% endblock %}
 
-{% block containerClass %}container-fh l-2column{% endblock %}
+{% block bodyClass %}container-fh{% endblock %}
 
 {% block content %}
     <div class="m-content m-content__hb">
         <div class="m-content__header">
             <h4 class="m-content__heading">Payement</h4>
         </div>
-        {{ form_start(form,  { 'action': action, 'attr': {'class': 'm-content__body'} } ) }}
-        {{ form_widget(form,  { 'attr': {'class': 'm-content__block'} } ) }}
-        {{ form_end(form) }}
+        <div class="m-content__block">
+            <p>
+                Montant total à payer : {{ payment.amountTotal | number_format(2, '.', ',') }} €
+            </p>
+            <p>
+                Montant déjà payé : {{ payment.amountPaid | number_format(2, '.', ',') }} €
+            </p>
+            {{ form_start(form,  { 'action': action, 'attr': {'class': 'm-content__body'} } ) }}
+            {{ form_widget(form,  { 'attr': {'class': 'm-content__block'} } ) }}
+            {{ form_end(form) }}
+
+            <hr>
+
+            <a class="btn btn-primary" href="{{ path('charge_detail', { 'id': payment.charge.id }) }}">Retourner à la charge</a>
+        </div>
     </div>
 {% endblock %}

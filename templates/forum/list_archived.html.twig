@@ -10,11 +10,9 @@
         Liste des conversations<span class="m-datagrid__header-items-amount">({{ listPost | length }})</span>
 
         <span class="float-right">
-            {% if is_granted('ROLE_ADMIN') %}
-                <a href="{{ path('forum_show_archived') }}" class="btn btn-secondary">
-                Voir les conversations archivées
-                </a>
-            {% endif %}
+            <a href="{{ path('forum_index') }}" class="btn btn-secondary">
+                Voir les conversations non archivées
+            </a>
 
             <a href="{{ path('forum_add_post') }}" class="btn btn-info">
                 Ajouter une nouvelle conversation
@@ -53,8 +51,8 @@
 
                 {% if is_granted('ROLE_ADMIN') %}
                     <span class="float-right">
-                        <a href="{{ path('forum_archive_post', { 'id': post.id }) }}">
-                            <button class="btn btn-sm btn-warning">Archiver</button>
+                        <a href="{{ path('forum_desarchive_post', { 'id': post.id }) }}">
+                            <button class="btn btn-sm btn-warning">Désarchiver</button>
                         </a>
                         <a href="{{ path('forum_delete_post', { 'id': post.id }) }}">
                             <button class="btn btn-sm btn-danger">Supprimer</button>

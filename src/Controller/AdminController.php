@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Condominium;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -43,8 +44,6 @@ class AdminController extends Controller
 
         $user = new User();
 
-        $user->setRoles(['ROLE_USER']);
-
         $form = $this->createForm(UserType::class, $user);
 
         $form->handleRequest($request);
@@ -52,15 +51,36 @@ class AdminController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
 
             $user = $form->getData();
+            $doctrine = $this->getDoctrine();
+            $em = $doctrine->getManager();
 
             $user->setPassword($encoder->encodePassword($user, $user->getFirstname()));
 
-            $em = $this->getDoctrine()->getManager();
+            // si on met le nouvelle utilisateur manager, on enleve son id et son role
+            if (in_array('ROLE_MANAGER', $user->getRoles())) {
+                $condominium =  $doctrine
+                    ->getRepository(Condominium::class)
+                    ->findOneById($user->getCondominium()->getId());
+                $oldUser = $doctrine
+                    ->getRepository(User::class)
+                    ->findOneById($condominium->getManager()->getId());
+
+                $oldUser->setRoles(['ROLE_USER']);
+                $condominium->setManager($user);
+
+                $em->persist($condominium);
+                $em->persist($oldUser);
+            }
+
             $em->persist($user);
             $em->flush();
 
-            return $this->redirectToRoute('admin_gestion_user');
+            $this->addFlash(
+                'success',
+                'Utilisateur ajouté avec succès!'
+            );
 
+            return $this->redirectToRoute('admin_gestion_user');
         }
 
         return $this->render('admin/adduser.html.twig', [
@@ -128,5 +148,41 @@ class AdminController extends Controller
         );
 
         return $this->redirectToRoute('admin_gestion_user');
+    }
+
+    /**
+     * @Route("/admin/condominium", name="admin_gestion_condominium")
+     */
+    public function showListCondominium() {
+
+        $listCondominium = $this->getDoctrine()
+            ->getRepository(Condominium::class)
+            ->findAll();
+
+        return $this->render('admin/condominium.html.twig', [
+            'listCondominium' => $listCondominium
+        ]);
+    }
+
+    /**
+     * @Route("/admin/condominium/delete/{id}", name="admin_delete_condominium")
+     * @param $id
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function deleteCondominium($id) {
+        $user = $this->getDoctrine()
+            ->getRepository(Condominium::class)
+            ->find($id);
+
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($user);
+        $em->flush();
+
+        $this->addFlash(
+            'success',
+            'Copropriété supprimée avec succès!'
+        );
+
+        return $this->redirectToRoute('admin_gestion_condominium');
     }
 }
