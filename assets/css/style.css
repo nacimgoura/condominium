@@ -19139,10 +19139,6 @@ body {
   padding-left: 9px;
 }
 
-.m-datatable .dt-bootstrap4 .dataTable.table-striped tbody tr.selected a {
-  color: #269af1;
-}
-
 .m-datatable .dt-bootstrap4 .dt-buttons .btn {
   border-color: #fff;
   color: #000;

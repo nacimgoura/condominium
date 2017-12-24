@@ -29,7 +29,7 @@ class ChargeController extends Controller
     }
 
     /**
-     * @Route("/charge/detail/{id}", requirements={"id" = "\d+"}, name="charge_detail")
+     * @Route("/charge/{id}", requirements={"id" = "\d+"}, name="charge_detail")
      * @param $id
      * @return \Symfony\Component\HttpFoundation\Response
      */
@@ -44,7 +44,7 @@ class ChargeController extends Controller
     }
 
     /**
-     * @Route("/charge/add", requirements={"id" = "\d+"}, name="charge_add")
+     * @Route("/charge/add", name="charge_add")
      * @param Request $request
      * @param PaymentService $paymentService
      * @return \Symfony\Component\HttpFoundation\Response

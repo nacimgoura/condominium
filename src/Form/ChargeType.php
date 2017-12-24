@@ -45,6 +45,17 @@ class ChargeType extends AbstractType
                 'label' => 'Personnes concernées',
                 'multiple' => true
             ])
+            ->add('contract', EntityType::class, [
+                'class' => 'App\Entity\Contract',
+                'query_builder' => function (EntityRepository $er) use ($user) {
+                    return $er->createQueryBuilder('contract')
+                        ->where("contract.condominium = :id")
+                        ->setParameter('id', $user->getCondominium()->getId())
+                        ->orderBy('contract.title', 'ASC');
+                },
+                'placeholder' => 'Choisissez un contrat',
+                'label' => 'Contrat lié'
+            ])
             ->add('attachment', FileType::class, [
                 'label' => 'pièce jointe',
                 'required' => false

@@ -1,3 +1,64 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Liste des contrats{% endblock %}
+
+{% block styles %}
+    {{ parent() }}
+    <link rel="stylesheet" href="/css/datatables.min.css"/>
+{% endblock %}
+
+{% block content %}
+    <h2 class="content-heading">
+        Liste des contrats<span class="m-datagrid__header-items-amount">({{ listContract | length }})</span>
+    </h2>
+    <div class="m-datatable">
+
+        {% if is_granted(['ROLE_MANAGER']) %}
+            <a href="{{ path('contract_add') }}" class="btn btn-info">
+                Ajouter un contrat
+            </a>
+        {% endif %}
+
+        <hr>
+
+        <table id="datatable" class="table table-striped">
+            <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Copropriété</th>
+                <th>Date de signature</th>
+                <th>Date de fin</th>
+                <th>Pièce jointe</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for contract in listContract %}
+                <tr>
+                    <td>{{ contract.title }}</td>
+                    <td>{{ contract.condominium.title }}</td>
+                    <td>{{ contract.signatureDate | date("d/m/y") }}</td>
+                    <td>{{ contract.deadline | date("d/m/y") }}</td>
+                    <td>
+                        {% if contract.attachment %}
+                            <a href="{{ asset('attachment/' ~ contract.attachment) }}" target="_blank" class="link-info">Voir</a>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if is_granted(['ROLE_MANAGER', 'ROLE_ADMIN']) %}
+                            <a href="{{ path('contract_delete', {'id': contract.id}) }}" class="btn btn-danger">
+                                Supprimer
+                            </a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ parent() }}
+    <script src="/js/datatables.min.js"></script>
+{% endblock %}

@@ -23,6 +23,14 @@ class Contract
     private $id;
 
     /**
+     * @var string
+     *
+     * @Assert\NotBlank()
+     * @ORM\Column(name="title", type="string", length=255, unique=true)
+     */
+    private $title;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="signatureDate", type="datetime")
@@ -37,10 +45,26 @@ class Contract
     private $deadline;
 
     /**
+     * @var string
+     * @Assert\NotNull()
+     * @Assert\File(
+     *     maxSize = "2048k"
+     * )
+     * @ORM\Column(name="attachment", type="string", length=255)
+     */
+    private $attachment;
+
+    /**
      * @ORM\OneToOne(targetEntity="Charge", mappedBy="contract")
-     * @ORM\JoinColumn(name="charge_id", referencedColumnName="id")
      */
     private $charge;
+
+    /**
+     * @Assert\NotNull()
+     * @ORM\ManyToOne(targetEntity="Condominium")
+     * @ORM\JoinColumn(name="condominium_id", referencedColumnName="id")
+     */
+    private $condominium;
 
 
     /**
@@ -51,6 +75,22 @@ class Contract
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * @param string $title
+     */
+    public function setTitle(string $title)
+    {
+        $this->title = $title;
     }
 
     /**
@@ -94,21 +134,41 @@ class Contract
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getCharge()
+    public function getAttachment()
     {
-        return $this->charge;
+        return $this->attachment;
     }
 
     /**
-     * @param mixed $charge
+     * @param string $attachment
      */
-    public function setCharge($charge)
+    public function setAttachment(string $attachment)
     {
-        $this->charge = $charge;
+        $this->attachment = $attachment;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getCondominium()
+    {
+        return $this->condominium;
+    }
+
+    /**
+     * @param mixed $condominium
+     */
+    public function setCondominium($condominium)
+    {
+        $this->condominium = $condominium;
+    }
+
+    public function __toString()
+    {
+        return $this->title;
+    }
 
 }
 

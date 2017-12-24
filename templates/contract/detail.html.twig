@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ contract.title }}{% endblock %}
+
+{% block bodyClass %}container-fh{% endblock %}
+
+{% block content %}
+    <div class="m-content m-content__hb">
+        <div class="m-content__header">
+            <h4 class="m-content__heading">{{ contract.title }}</h4>
+        </div>
+        <div class="m-content__block">
+
+            {% if contract.attachment %}
+                <p class="row">
+                    <a href="{{ asset('attachment/' ~ contract.attachment) }}" target="_blank" class="link-info">Pièce jointe</a>
+                </p>
+            {% endif %}
+
+            <hr>
+
+            <a class="btn btn-primary" href="{{ path('contract_index') }}">Retourner à la liste des charges</a>
+            <a href="{{ path('contract_delete', { 'id': contract.id }) }}" class="btn btn-danger">Supprimer la charge</a>
+
+        </div>
+    </div>
+
+{% endblock %}

@@ -30,6 +30,7 @@
                 <th>Status</th>
                 <th>Date d'échéance</th>
                 <th>Montant</th>
+                <th>Contrat lié</th>
                 <th>Pièce jointe</th>
                 <th>Action</th>
             </tr>
@@ -51,6 +52,11 @@
                     </td>
                     <td>{{ charge.deadline | date("d/m/y") }}</td>
                     <td>{{ charge.amount }} €</td>
+                    <td>
+                        {% if charge.contract %}
+                            <a href="{{ path('contract_detail', { 'id': charge.contract.id }) }}" class="link-info">Voir</a>
+                        {% endif %}
+                    </td>
                     <td>
                         {% if charge.attachment %}
                             <a href="{{ asset('attachment/' ~ charge.attachment) }}" target="_blank" class="link-info">Voir</a>
