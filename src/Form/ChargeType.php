@@ -5,7 +5,6 @@ namespace App\Form;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
@@ -26,7 +25,7 @@ class ChargeType extends AbstractType
                 'scale' => 2
             ])
             ->add('deadline', DateType::class, [
-                'label' => 'Date de fin',
+                'label' => 'Date d\'échéance',
                 'widget' => 'single_text',
                 'html5' => false,
                 'format' => 'yyyy-MM-dd h:m',
@@ -54,7 +53,8 @@ class ChargeType extends AbstractType
                         ->orderBy('contract.title', 'ASC');
                 },
                 'placeholder' => 'Choisissez un contrat',
-                'label' => 'Contrat lié'
+                'label' => 'Contrat lié',
+                'required' => false
             ])
             ->add('attachment', FileType::class, [
                 'label' => 'pièce jointe',
@@ -66,6 +66,8 @@ class ChargeType extends AbstractType
     }
 
     public function configureOptions(OptionsResolver $resolver) {
-        $resolver->setDefaults(['user' => null]);
+        $resolver->setDefaults([
+            'user' => null
+        ]);
     }
 }

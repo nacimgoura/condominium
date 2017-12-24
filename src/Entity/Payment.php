@@ -3,9 +3,9 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Mapping\PostRemove;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Payment
@@ -53,9 +53,11 @@ class Payment
     private $createdAt;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="attachment", type="string", length=255, nullable=true)
+     * @var array
+     * @Assert\File(
+     *     maxSize = "2048k"
+     * )
+     * @ORM\Column(name="attachment", type="string", nullable=true)
      */
     private $attachment;
 
@@ -107,7 +109,7 @@ class Payment
     /**
      * Set attachment
      *
-     * @param string $attachment
+     * @param array $attachment
      */
     public function setAttachment($attachment)
     {
@@ -117,7 +119,7 @@ class Payment
     /**
      * Get attachment
      *
-     * @return string
+     * @return array
      */
     public function getAttachment()
     {
@@ -217,7 +219,7 @@ class Payment
     }
 
     /**
-     * @PostRemove
+     * @ORM\PostRemove
      */
     public function deleteAttachment() {
         try {

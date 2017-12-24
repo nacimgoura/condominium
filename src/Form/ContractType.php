@@ -15,7 +15,7 @@ class ContractType extends AbstractType
         $builder
             ->add('title', null, ['label' => 'Nom'])
             ->add('deadline', DateType::class, [
-                'label' => 'Date de fin',
+                'label' => 'Date d\'échéance',
                 'widget' => 'single_text',
                 'html5' => false,
                 'format' => 'yyyy-MM-dd h:m',

@@ -54,12 +54,12 @@
                     <td>{{ charge.amount }} €</td>
                     <td>
                         {% if charge.contract %}
-                            <a href="{{ path('contract_detail', { 'id': charge.contract.id }) }}" class="link-info">Voir</a>
+                            <a href="{{ path('contract_detail', { 'id': charge.contract.id }) }}" class="link-info">Contrat</a>
                         {% endif %}
                     </td>
                     <td>
                         {% if charge.attachment %}
-                            <a href="{{ asset('attachment/' ~ charge.attachment) }}" target="_blank" class="link-info">Voir</a>
+                            <a href="{{ asset('attachment/' ~ charge.attachment) }}" target="_blank" class="link-info">Pièce jointe</a>
                         {% endif %}
                     </td>
                     <td>
@@ -67,6 +67,9 @@
                             Détail
                         </a>
                         {% if is_granted(['ROLE_MANAGER', 'ROLE_ADMIN']) %}
+                            <a href="{{ path('charge_edit', {'id': charge.id}) }}" class="btn btn-warning">
+                                Editer
+                            </a>
                             <a href="{{ path('charge_delete', {'id': charge.id}) }}" class="btn btn-danger">
                                 Supprimer
                             </a>

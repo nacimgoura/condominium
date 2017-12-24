@@ -95,6 +95,12 @@ class User implements UserInterface, \Serializable
      */
     private $conversation;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Project", mappedBy="user", cascade={"all"})
+     * @ORM\JoinColumn(name="project_id", referencedColumnName="id", nullable=true)
+     */
+    private $project;
+
     public function __construct()
     {
         $this->roles = ['ROLE_USER'];

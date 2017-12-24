@@ -7,6 +7,7 @@ use App\Form\ChargeType;
 use App\Form\PaymentType;
 use App\Service\PaymentService;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -85,8 +86,60 @@ class ChargeController extends Controller
             return $this->redirectToRoute('charge_index');
         }
 
-        return $this->render('charge/add.html.twig', [
+        return $this->render('charge/formcharge.html.twig', [
             'action' => $this->generateUrl('charge_add'),
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/charge/edit/{id}", requirements={"id" = "\d+"}, name="charge_edit")
+     * @param Request $request
+     * @param PaymentService $paymentService
+     * @param $id
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function editCharge(Request $request, PaymentService $paymentService, $id) {
+
+        $charge = $this->getDoctrine()
+            ->getRepository(Charge::class)
+            ->findOneById($id);
+
+        if ($charge->getAttachment()) {
+            $charge->setAttachment(new File('attachment/'.$charge->getAttachment()));
+        }
+
+        $form = $this->createForm(ChargeType::class, $charge, ['user' => $this->getUser()]);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $charge = $form->getData();
+
+            $file = $form['attachment']->getData();
+            if ($file) {
+                $fileName = md5(uniqid()).'.'.$file->guessExtension();
+                $file->move('attachment', $fileName);
+                $charge->setAttachment($fileName);
+            }
+
+            $em = $this->getDoctrine()->getManager();
+
+            $paymentService->generate($charge);
+            $em->persist($charge);
+            $em->flush();
+
+            $this->addFlash(
+                'success',
+                'Charge éditée avec succès!'
+            );
+            return $this->redirectToRoute('charge_index');
+        }
+
+        return $this->render('charge/formcharge.html.twig', [
+            'charge' => $charge,
+            'action' => $this->generateUrl('charge_edit', ['id' => $id]),
             'form' => $form->createView()
         ]);
     }
@@ -167,7 +220,7 @@ class ChargeController extends Controller
 
         }
 
-        return $this->render('charge/payement.html.twig', [
+        return $this->render('charge/formpayement.html.twig', [
             'payment' => $payment,
             'action' => $this->generateUrl('charge_pay', ['id' => $id ]),
             'form' => $form->createView()

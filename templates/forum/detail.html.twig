@@ -18,10 +18,15 @@
 
     {{ include('forum/_post_tags.html.twig') }}
 
+    <hr>
+
     <div id="post-add-comment" class="well">
-        {{ form_start(form,  { 'action': action, 'attr': {'class': 'm-content__body', 'novalidate': 'novalidate' } } ) }}
-        {{ form_widget(form,  { 'attr': {'class': 'm-content__block'} } ) }}
-        {{ form_end(form) }}
+        <button class="btn btn-info">Répondre</button>
+        <div class="hidden">
+            {{ form_start(form,  { 'action': action, 'attr': {'class': 'm-content__body', 'novalidate': 'novalidate' } } ) }}
+            {{ form_widget(form,  { 'attr': {'class': 'm-content__block'} } ) }}
+            {{ form_end(form) }}
+        </div>
     </div>
 
     <hr>

@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Mapping\JoinColumn;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -54,8 +53,8 @@ class Conversation
      * @Assert\NotBlank()
      * @ORM\ManyToMany(targetEntity="User")
      * JoinTable(name="user",
-     *      joinColumns={@JoinColumn(name="user_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@JoinColumn(name="authorized_user", referencedColumnName="id")}
+     *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="authorized_user", referencedColumnName="id")}
      *      )
      */
     private $authorizedUser;
@@ -89,9 +88,6 @@ class Conversation
      * @ORM\JoinColumn(name="condominium_id", referencedColumnName="id")
      */
     private $condominium;
-
-
-
 
     public function __construct()
     {

@@ -10,6 +10,12 @@
             <h4 class="m-content__heading">Charge</h4>
         </div>
         <div class="m-content__block">
+
+            {% if charge.attachment %}
+                Pièce jointe existante :
+                <a href="{{ asset('attachment/' ~ charge.attachment.filename) }}" target="_blank" class="link-info">Voir</a>
+            {% endif %}
+
             {{ form_start(form,  { 'action': action, 'attr': {'class': 'm-content__body'} } ) }}
             {{ form_widget(form,  { 'attr': {'class': 'm-content__block'} } ) }}
             {{ form_end(form) }}

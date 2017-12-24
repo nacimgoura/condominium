@@ -214,6 +214,12 @@
         $('body').toggleClass('sidebar-is-opened');
     });
 
+    $('#post-add-comment').find('button').on('click', function () {
+        $(this).addClass('hidden');
+        $('#post-add-comment').find('div').removeClass('hidden');
+
+    });
+
     $(document).on('click', function (e) {
         if ($('body').hasClass('sidebar-is-opened') && !$(e.target).closest('.sidebar-toggler').length) {
             if (!$(e.target).closest('.sidebar').length) {

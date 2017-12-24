@@ -18,20 +18,23 @@ class DefaultController extends Controller
     public function index() {
 
         $condominium = null;
+        $listPost = null;
+        $listCharge = null;
+        $listPayment = null;
         if (in_array('ROLE_USER', $this->getUser()->getRoles())) {
             $condominium =  $this->getDoctrine()
                 ->getRepository(Condominium::class)
                 ->findOneById($this->getUser()->getCondominium()->getId());
+            $listPost = $this->getDoctrine()
+                ->getRepository(Conversation::class)
+                ->findAllAuthorized($this->getUser());
+            $listCharge = $this->getDoctrine()
+                ->getRepository(Charge::class)
+                ->findOwnCharge($this->getUser());
+            $listPayment = $this->getDoctrine()
+                ->getRepository(Payment::class)
+                ->findByUser($this->getUser());
         }
-        $listPost = $this->getDoctrine()
-            ->getRepository(Conversation::class)
-            ->findAllAuthorized($this->getUser());
-        $listCharge = $this->getDoctrine()
-            ->getRepository(Charge::class)
-            ->findOwnCharge($this->getUser());
-        $listPayment = $this->getDoctrine()
-            ->getRepository(Payment::class)
-            ->findByUser($this->getUser());
 
         return $this->render('home/index.html.twig', [
             'title' => 'Accueil',
