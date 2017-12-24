@@ -23,7 +23,7 @@
                             <span class="navbar-notify__icon iconfont iconfont-bell"></span>
                             <span class="navbar-notify__text">Notifications</span>
                           </span>
-                          <span class="navbar-notify__amount">3</span>
+                          <span class="navbar-notify__amount">{{ listNotif | length }}</span>
                         </span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right navbar-dropdown-menu navbar-dropdown-notifications">
@@ -31,10 +31,16 @@
                             <span>NOTIFICATIONS</span>
                         </div>
                         <div class="navbar-dropdown-notifications__body">
-                            <div class="navbar-dropdown-notifications__body-empty">
-                                <img class="navbar-dropdown-notifications__body-empty-image" src="/img/empty-notifications.png" alt="notification">
-                                <div class="navbar-dropdown-notifications__body-empty-text">Aucune notification!</div>
-                            </div>
+                            {% for notif in listNotif %}
+                                <div>
+                                    {{ notif.title }}
+                                </div>
+                            {% else %}
+                                <div class="navbar-dropdown-notifications__body-empty">
+                                    <img class="navbar-dropdown-notifications__body-empty-image" src="/img/empty-notifications.png" alt="notification">
+                                    <div class="navbar-dropdown-notifications__body-empty-text">Aucune notification!</div>
+                                </div>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
@@ -52,7 +58,7 @@
                                 <div class="dropdown-info__job">Utilisateur</div>
                                 <div class="dropdown-info-buttons">
                                     <a class="dropdown-info__viewprofile" href="{{ path('account_index') }}">
-                                        View Profile
+                                        Voir profil
                                     </a>
                                 </div>
                             </div>

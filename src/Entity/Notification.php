@@ -25,9 +25,9 @@ class Notification
     /**
      * @var string
      *
-     * @ORM\Column(name="message", type="string", length=255)
+     * @ORM\Column(name="title", type="string", length=255)
      */
-    private $message;
+    private $title;
 
     /**
      * @var string
@@ -61,23 +61,23 @@ class Notification
     }
 
     /**
-     * Set message
+     * Set title
      *
-     * @param string $message
+     * @param string $title
      */
-    public function setMessage($message)
+    public function setTitle($title)
     {
-        $this->message = $message;
+        $this->title = $title;
     }
 
     /**
-     * Get message
+     * Get title
      *
      * @return string
      */
-    public function getMessage()
+    public function getTitle()
     {
-        return $this->message;
+        return $this->title;
     }
 
     /**

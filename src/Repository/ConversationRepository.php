@@ -25,7 +25,7 @@ class ConversationRepository extends EntityRepository
                 ->getResult();
         } else if (in_array('ROLE_MANAGER', $user->getRoles())) {
             return $this->createQueryBuilder('c')
-                ->where('c.condominium = :condominium')
+                ->where('c.isArchived = false AND c.condominium = :condominium')
                 ->setParameter('condominium', $user->getCondominium()->getId())
                 ->getQuery()
                 ->getResult();

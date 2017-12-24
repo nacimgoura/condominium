@@ -17,9 +17,7 @@
 
     <body class="{% block bodyClass %}{% endblock %}">
 
-        {% block navbar %}
-            {% include 'navbar/navbar.html.twig' %}
-        {% endblock %}
+        {{ render(controller('App\\Controller\\DefaultController::navbar')) }}
 
         <div class="page-wrap">
 
