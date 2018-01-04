@@ -53,8 +53,12 @@
                                 <td>{{ payment.amountPaid | number_format(2, '.', ',') }} €</td>
                                 <td>{{ payment.amountTotal | number_format(2, '.', ',') }} €</td>
                                 <td>
-                                    {% if payment.attachment %}
-                                        <a href="{{ asset('attachment/' ~ payment.attachment) }}" target="_blank" class="link-info">Voir</a>
+                                    {% if payment.listAttachment %}
+                                        {% for attachment in payment.listAttachment %}
+                                            <a href="{{ asset('attachment/' ~ attachment) }}" target="_blank" class="link-info">
+                                                Pièce jointe {{ loop.index }}
+                                            </a>
+                                        {% endfor %}
                                     {% endif %}
                                 </td>
                                 <td>

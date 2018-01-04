@@ -83,9 +83,8 @@ class Conversation
     private $createdAt;
 
     /**
-     * @Assert\NotNull()
      * @ORM\ManyToOne(targetEntity="Condominium")
-     * @ORM\JoinColumn(name="condominium_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="condominium_id", referencedColumnName="id", nullable=true)
      */
     private $condominium;
 

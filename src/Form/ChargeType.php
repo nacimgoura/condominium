@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\Charge;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -14,9 +15,17 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ChargeType extends AbstractType
 {
+
     public function buildForm(FormBuilderInterface $builder, array $options) {
 
         $user = $options['user'];
+        $charge = $options['charge'];
+
+        $condominiumId = $charge->getCondominium()->getId();
+
+        if ($user->getCondominium()) {
+            $condominiumId = $user->getCondominium()->getId();
+        }
 
         $builder
             ->add('title', null, ['label' => 'Nom'])
@@ -35,10 +44,10 @@ class ChargeType extends AbstractType
             ])
             ->add('user', EntityType::class, [
                 'class' => 'App\Entity\User',
-                'query_builder' => function (EntityRepository $er) use ($user) {
+                'query_builder' => function (EntityRepository $er) use ($user, $condominiumId) {
                     return $er->createQueryBuilder('u')
                         ->where("u.username != 'admin' AND u.condominium = :id")
-                        ->setParameter('id', $user->getCondominium()->getId())
+                        ->setParameter('id', $condominiumId)
                         ->orderBy('u.username', 'ASC');
                 },
                 'label' => 'Personnes concernées',
@@ -46,10 +55,10 @@ class ChargeType extends AbstractType
             ])
             ->add('contract', EntityType::class, [
                 'class' => 'App\Entity\Contract',
-                'query_builder' => function (EntityRepository $er) use ($user) {
+                'query_builder' => function (EntityRepository $er) use ($user, $condominiumId) {
                     return $er->createQueryBuilder('contract')
                         ->where("contract.condominium = :id")
-                        ->setParameter('id', $user->getCondominium()->getId())
+                        ->setParameter('id', $condominiumId)
                         ->orderBy('contract.title', 'ASC');
                 },
                 'placeholder' => 'Choisissez un contrat',
@@ -58,7 +67,8 @@ class ChargeType extends AbstractType
             ])
             ->add('attachment', FileType::class, [
                 'label' => 'pièce jointe',
-                'required' => false
+                'required' => false,
+                'data_class' => null
             ])
             ->add('save', SubmitType::class, ['label' => 'Valider', 'attr' => [
                 'class' => 'btn-success'
@@ -67,7 +77,8 @@ class ChargeType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver) {
         $resolver->setDefaults([
-            'user' => null
+            'user' => null,
+            'charge' => null
         ]);
     }
 }

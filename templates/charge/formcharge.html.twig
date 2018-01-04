@@ -11,9 +11,9 @@
         </div>
         <div class="m-content__block">
 
-            {% if charge.attachment %}
+            {% if charge and charge.attachment %}
                 Pièce jointe existante :
-                <a href="{{ asset('attachment/' ~ charge.attachment.filename) }}" target="_blank" class="link-info">Voir</a>
+                <a href="{{ asset('attachment/' ~ charge.attachment) }}" target="_blank" class="link-info">Voir</a>
             {% endif %}
 
             {{ form_start(form,  { 'action': action, 'attr': {'class': 'm-content__body'} } ) }}

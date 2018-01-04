@@ -16,7 +16,6 @@ class DefaultController extends Controller
      * @Route("/", name="home_index")
      */
     public function index() {
-
         $condominium = null;
         $listPost = null;
         $listCharge = null;

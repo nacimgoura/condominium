@@ -53,13 +53,19 @@ class Payment
     private $createdAt;
 
     /**
-     * @var array
+     * @var string
      * @Assert\File(
      *     maxSize = "2048k"
      * )
      * @ORM\Column(name="attachment", type="string", nullable=true)
      */
     private $attachment;
+
+    /**
+     * @var array
+     * @ORM\Column(name="listAttachment", type="array", nullable=true)
+     */
+    private $listAttachment;
 
     /**
      * @var string
@@ -109,7 +115,7 @@ class Payment
     /**
      * Set attachment
      *
-     * @param array $attachment
+     * @param string $attachment
      */
     public function setAttachment($attachment)
     {
@@ -119,11 +125,27 @@ class Payment
     /**
      * Get attachment
      *
-     * @return array
+     * @return string
      */
     public function getAttachment()
     {
         return $this->attachment;
+    }
+
+    /**
+     * @return array
+     */
+    public function getListAttachment()
+    {
+        return $this->listAttachment;
+    }
+
+    /**
+     * @param array $listAttachment
+     */
+    public function setListAttachment(array $listAttachment)
+    {
+        $this->listAttachment = $listAttachment;
     }
 
     /**
@@ -224,7 +246,9 @@ class Payment
     public function deleteAttachment() {
         try {
             $fs = new Filesystem();
-            $fs->remove('attachment/'.$this->attachment);
+            foreach($this->listAttachment as $attachment) {
+                $fs->remove('attachment/'.$attachment);
+            }
         } catch (IOExceptionInterface $e) {
             echo "An error occurred while creating your directory at ".$e->getPath();
         }

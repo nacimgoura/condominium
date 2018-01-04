@@ -71,6 +71,7 @@ class ChargeController extends Controller
                 $fileName = md5(uniqid()).'.'.$file->guessExtension();
                 $file->move('attachment', $fileName);
                 $charge->setAttachment($fileName);
+                $charge->setListAttachment(array_merge($charge->getListAttachment(), [$charge->getAttachment()]));
             }
 
             $em = $this->getDoctrine()->getManager();
@@ -87,6 +88,7 @@ class ChargeController extends Controller
         }
 
         return $this->render('charge/formcharge.html.twig', [
+            'charge' => $charge,
             'action' => $this->generateUrl('charge_add'),
             'form' => $form->createView()
         ]);
@@ -105,29 +107,31 @@ class ChargeController extends Controller
             ->getRepository(Charge::class)
             ->findOneById($id);
 
-        if ($charge->getAttachment()) {
-            $charge->setAttachment(new File('attachment/'.$charge->getAttachment()));
-        }
-
-        $form = $this->createForm(ChargeType::class, $charge, ['user' => $this->getUser()]);
+        $attachment = $charge->getAttachment();
+        $form = $this->createForm(ChargeType::class, $charge, [
+            'charge' => $charge,
+            'user' => $this->getUser()
+        ]);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $charge = $form->getData();
+            $formCharge = $form->getData();
 
             $file = $form['attachment']->getData();
             if ($file) {
                 $fileName = md5(uniqid()).'.'.$file->guessExtension();
                 $file->move('attachment', $fileName);
-                $charge->setAttachment($fileName);
+                $formCharge->setAttachment($fileName);
+            } else {
+                $formCharge->setAttachment($attachment);
             }
 
             $em = $this->getDoctrine()->getManager();
 
-            $paymentService->generate($charge);
-            $em->persist($charge);
+            $paymentService->generate($formCharge);
+            $em->persist($formCharge);
             $em->flush();
 
             $this->addFlash(
@@ -203,7 +207,7 @@ class ChargeController extends Controller
                 if ($file) {
                     $fileName = md5(uniqid()).'.'.$file->guessExtension();
                     $file->move('attachment', $fileName);
-                    $payment->setAttachment($fileName);
+                    $payment->setListAttachment(array_merge($payment->getListAttachment(), [$fileName]));
                 }
 
                 $em = $this->getDoctrine()->getManager();
