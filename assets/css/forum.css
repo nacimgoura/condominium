@@ -3,8 +3,8 @@
 
 .post-metadata {
     color: #b4bcc2;
-    font-size: 19px;
-    margin-bottom: 16px;
+    font-size: 16px;
+    margin-bottom: 8px;
 }
 .post-metadata .metadata {
     margin-right: 1.5em;
@@ -35,11 +35,6 @@ body.blog_index h2.post-title a:hover {
 
 body.blog_index article.post {
     margin-bottom: 3em;
-}
-
-body.blog_index .post-metadata {
-    font-size: 16px;
-    margin-bottom: 8px;
 }
 
 /* Page: 'Blog post show'

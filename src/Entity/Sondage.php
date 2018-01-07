@@ -32,24 +32,43 @@ class Sondage
     /**
      * @var array
      * @Assert\NotBlank()
-     * @ORM\Column(name="answer_available", type="array")
-     * @ORM\OneToMany(targetEntity="Category", mappedBy="answer_given")
+     * @ORM\Column(name="choice", type="array")
      */
-    private $answerAvailable;
+    private $choice;
 
     /**
-     * @var array
-     * @Assert\NotBlank()
-     * @ORM\Column(name="answer_given", type="array")
-     * @ORM\ManyToOne(targetEntity="Sondage", inversedBy="answer_available")
-     * @ORM\JoinColumn(name="answer_given_id", referencedColumnName="id")
+     * @ORM\OneToMany(targetEntity="Answer", mappedBy="sondage", cascade={"all"})
      */
-    private $answerGiven;
+    private $answer;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Project", inversedBy="sondage")
+     * @ORM\JoinColumn(name="project_id", referencedColumnName="id", nullable=true)
+     */
+    private $project;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="sondage")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
+     */
+    private $user;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="created_at", type="datetime")
+     */
+    private $createdAt;
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTime();
+    }
 
     /**
      * @return int
      */
-    public function getId(): int
+    public function getId()
     {
         return $this->id;
     }
@@ -57,7 +76,7 @@ class Sondage
     /**
      * @return string
      */
-    public function getQuestion(): string
+    public function getQuestion()
     {
         return $this->question;
     }
@@ -65,7 +84,7 @@ class Sondage
     /**
      * @param string $question
      */
-    public function setQuestion(string $question): void
+    public function setQuestion(string $question)
     {
         $this->question = $question;
     }
@@ -73,34 +92,73 @@ class Sondage
     /**
      * @return array
      */
-    public function getAnswerAvailable(): array
+    public function getChoice()
     {
-        return $this->answerAvailable;
+        return $this->choice;
     }
 
     /**
-     * @param array $answerAvailable
+     * @param array $choice
      */
-    public function setAnswerAvailable(array $answerAvailable): void
+    public function setChoice(array $choice)
     {
-        $this->answerAvailable = $answerAvailable;
+        $this->choice = $choice;
     }
 
     /**
-     * @return array
+     * @return mixed
      */
-    public function getAnswerGiven(): array
+    public function getAnswer()
     {
-        return $this->answerGiven;
+        return $this->answer;
     }
 
     /**
-     * @param array $answerGiven
+     * @param mixed $answer
      */
-    public function setAnswerGiven(array $answerGiven): void
+    public function setAnswer($answer)
     {
-        $this->answerGiven = $answerGiven;
+        $this->answer = $answer;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getProject()
+    {
+        return $this->project;
+    }
+
+    /**
+     * @param mixed $project
+     */
+    public function setProject($project)
+    {
+        $this->project = $project;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * @param mixed $user
+     */
+    public function setUser($user)
+    {
+        $this->user = $user;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getCreatedAt(): \DateTime
+    {
+        return $this->createdAt;
+    }
 
 }

@@ -55,11 +55,6 @@ class Contract
     private $attachment;
 
     /**
-     * @ORM\OneToOne(targetEntity="Charge", mappedBy="contract")
-     */
-    private $charge;
-
-    /**
      * @Assert\NotNull()
      * @ORM\ManyToOne(targetEntity="Condominium")
      * @ORM\JoinColumn(name="condominium_id", referencedColumnName="id")

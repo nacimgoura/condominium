@@ -9,7 +9,6 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(name="notification")
  * @ORM\Entity(repositoryClass="App\Repository\NotificationRepository")
- * @ORM\HasLifecycleCallbacks()
  */
 class Notification
 {
@@ -49,6 +48,10 @@ class Notification
      */
     private $user;
 
+    public function __construct()
+    {
+        $this->createdAt = new \DateTime();
+    }
 
     /**
      * Get id
@@ -134,14 +137,6 @@ class Notification
     public function setUser($user)
     {
         $this->user = $user;
-    }
-
-    /**
-     * @ORM\PrePersist
-     */
-    public function setDefaultValue()
-    {
-        $this->createdAt = new \DateTime();
     }
 }
 

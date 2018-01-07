@@ -43,7 +43,7 @@ class Charge
      * @Assert\Range(
      *      min = 0
      * )
-     * @ORM\Column(name="amount", type="float")
+     * @ORM\Column(name="amount", type="float", scale=2)
      */
     private $amount;
 
@@ -74,7 +74,7 @@ class Charge
     private $attachment;
 
     /**
-     * @ORM\OneToOne(targetEntity="Contract", inversedBy="charge")
+     * @ORM\OneToOne(targetEntity="Contract")
      * @ORM\JoinColumn(name="contract_id", referencedColumnName="id", nullable=true)
      */
     private $contract;

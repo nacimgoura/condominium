@@ -4,3 +4,10 @@ twig:
     strict_variables: '%kernel.debug%'
     exception_controller: App\Controller\ExceptionController::showException
     form_themes: ['bootstrap_4_layout.html.twig']
+    number_format:
+        decimals: 2
+        decimal_point: ','
+        thousands_separator: '.'
+    date:
+        format: d/m/y H:i:s
+        interval_format: '%%d jours'

@@ -58,7 +58,10 @@ class ChargeController extends Controller
 
         $charge->setCondominium($this->getUser()->getCondominium());
 
-        $form = $this->createForm(ChargeType::class, $charge, ['user' => $this->getUser()]);
+        $form = $this->createForm(ChargeType::class, $charge, [
+            'charge' => $charge,
+            'user' => $this->getUser()
+        ]);
 
         $form->handleRequest($request);
 
@@ -188,7 +191,12 @@ class ChargeController extends Controller
                 'user' => $this->getUser()
             ]);
 
-        $form = $this->createForm(PaymentType::class, clone $payment);
+        // on rempli l'input avec le montant restant à payer
+        $formPayment = clone $payment;
+
+        $formPayment->setAmountPaid($payment->getAmountTotal() - $payment->getAmountPaid());
+
+        $form = $this->createForm(PaymentType::class, $formPayment);
 
         $form->handleRequest($request);
 
@@ -198,7 +206,7 @@ class ChargeController extends Controller
 
             $newAmountPaid = $payment->getAmountPaid() + $newPayment->getAmountPaid();
 
-            if ($newAmountPaid > $payment->getAmountTotal()) {
+            if (number_format($newAmountPaid) > number_format($payment->getAmountTotal())) {
                 $form->get('amountPaid')->addError(new FormError('La somme versée excède votre charge.'));
             } else {
                 $payment->setAmountPaid($newAmountPaid);

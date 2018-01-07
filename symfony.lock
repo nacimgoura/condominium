@@ -89,6 +89,9 @@
     "monolog/monolog": {
         "version": "1.23.0"
     },
+    "ob/highcharts-bundle": {
+        "version": "1.6"
+    },
     "ocramius/package-versions": {
         "version": "1.2.0"
     },
@@ -364,5 +367,8 @@
     },
     "zendframework/zend-eventmanager": {
         "version": "3.2.0"
+    },
+    "zendframework/zend-json": {
+        "version": "3.1.0"
     }
 }

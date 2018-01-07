@@ -64,9 +64,15 @@ class Project
      * @Assert\File(
      *     maxSize = "2048k"
      * )
-     * @ORM\Column(name="attachment", type="array", nullable=true)
+     * @ORM\Column(name="attachment", type="string", nullable=true)
      */
     private $attachment;
+
+    /**
+     * @var array
+     * @ORM\Column(name="listAttachment", type="array", nullable=true)
+     */
+    private $listAttachment;
 
     /**
      * @ORM\OneToOne(targetEntity="Conversation")
@@ -90,18 +96,15 @@ class Project
     private $authorizedUser;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Sondage")
-     * JoinTable(name="sondage",
-     *      joinColumns={@ORM\JoinColumn(name="sondage_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="sondage_id", referencedColumnName="id")}
-     *      )
+     * @ORM\OneToMany(targetEntity="Sondage", mappedBy="project")
+     * @ORM\JoinColumn(name="sondage_id", referencedColumnName="id", nullable=true)
      */
     private $sondage;
 
     /**
      * @return int
      */
-    public function getId(): int
+    public function getId()
     {
         return $this->id;
     }
@@ -109,7 +112,7 @@ class Project
     /**
      * @return string
      */
-    public function getTitle(): string
+    public function getTitle()
     {
         return $this->title;
     }
@@ -117,7 +120,7 @@ class Project
     /**
      * @param string $title
      */
-    public function setTitle(string $title): void
+    public function setTitle(string $title)
     {
         $this->title = $title;
     }
@@ -125,7 +128,7 @@ class Project
     /**
      * @return string
      */
-    public function getDescription(): string
+    public function getDescription()
     {
         return $this->description;
     }
@@ -133,7 +136,7 @@ class Project
     /**
      * @param string $description
      */
-    public function setDescription(string $description): void
+    public function setDescription(string $description)
     {
         $this->description = $description;
     }
@@ -141,7 +144,7 @@ class Project
     /**
      * @return string
      */
-    public function getStatus(): string
+    public function getStatus()
     {
         return $this->status;
     }
@@ -149,7 +152,7 @@ class Project
     /**
      * @param string $status
      */
-    public function setStatus(string $status): void
+    public function setStatus(string $status)
     {
         $this->status = $status;
     }
@@ -157,7 +160,7 @@ class Project
     /**
      * @return \DateTime
      */
-    public function getCreatedAt(): \DateTime
+    public function getCreatedAt()
     {
         return $this->createdAt;
     }
@@ -165,7 +168,7 @@ class Project
     /**
      * @param \DateTime $createdAt
      */
-    public function setCreatedAt(\DateTime $createdAt): void
+    public function setCreatedAt(\DateTime $createdAt)
     {
         $this->createdAt = $createdAt;
     }
@@ -173,7 +176,7 @@ class Project
     /**
      * @return \DateTime
      */
-    public function getDeadline(): \DateTime
+    public function getDeadline()
     {
         return $this->deadline;
     }
@@ -181,7 +184,7 @@ class Project
     /**
      * @param \DateTime $deadline
      */
-    public function setDeadline(\DateTime $deadline): void
+    public function setDeadline(\DateTime $deadline)
     {
         $this->deadline = $deadline;
     }
@@ -189,7 +192,7 @@ class Project
     /**
      * @return string
      */
-    public function getAttachment(): string
+    public function getAttachment()
     {
         return $this->attachment;
     }
@@ -197,9 +200,25 @@ class Project
     /**
      * @param string $attachment
      */
-    public function setAttachment(string $attachment): void
+    public function setAttachment(string $attachment)
     {
         $this->attachment = $attachment;
+    }
+
+    /**
+     * @return array
+     */
+    public function getListAttachment(): array
+    {
+        return $this->listAttachment;
+    }
+
+    /**
+     * @param array $listAttachment
+     */
+    public function setListAttachment(array $listAttachment): void
+    {
+        $this->listAttachment = $listAttachment;
     }
 
     /**
@@ -213,7 +232,7 @@ class Project
     /**
      * @param mixed $conversation
      */
-    public function setConversation($conversation): void
+    public function setConversation($conversation)
     {
         $this->conversation = $conversation;
     }
@@ -229,7 +248,7 @@ class Project
     /**
      * @param mixed $user
      */
-    public function setUser($user): void
+    public function setUser($user)
     {
         $this->user = $user;
     }
@@ -245,7 +264,7 @@ class Project
     /**
      * @param mixed $authorizedUser
      */
-    public function setAuthorizedUser($authorizedUser): void
+    public function setAuthorizedUser($authorizedUser)
     {
         $this->authorizedUser = $authorizedUser;
     }
@@ -261,7 +280,7 @@ class Project
     /**
      * @param mixed $sondage
      */
-    public function setSondage($sondage): void
+    public function setSondage($sondage)
     {
         $this->sondage = $sondage;
     }

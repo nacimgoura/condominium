@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des sondages{% endblock %}
+
+{% block content %}
+
+    <h2 class="content-heading">
+        Liste de vos sondages<span class="m-datagrid__header-items-amount">({{ listSondage | length }})</span>
+
+        <span class="float-right">
+
+            <a href="{{ path('sondage_add') }}" class="btn btn-info">
+                Ajouter un nouveau sondage
+            </a>
+        </span>
+
+    </h2>
+
+    <hr>
+
+    {% for sondage in listSondage %}
+        <article class="post">
+            <h2 class="post-title">
+                <a href="{{ path('sondage_detail', {'id': sondage.id}) }}">
+                    {{ sondage.question }}
+                </a>
+            </h2>
+
+            <p class="post-metadata">
+                <span class="metadata">{{ sondage.answer | length }} réponse(s)</span>
+            </p>
+
+        </article>
+    {% else %}
+        <h2 class="text-center">Aucun sondage publié!</h2>
+    {% endfor %}
+
+{% endblock %}

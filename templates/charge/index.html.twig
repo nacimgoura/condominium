@@ -50,7 +50,7 @@
                                 {{ charge.status }}
                                 </span>
                     </td>
-                    <td>{{ charge.deadline | date("d/m/y") }}</td>
+                    <td>{{ charge.deadline | date }}</td>
                     <td>{{ charge.amount }} €</td>
                     <td>
                         {% if charge.contract %}

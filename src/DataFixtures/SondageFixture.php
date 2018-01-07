@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Answer;
 use App\Entity\Sondage;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
@@ -13,7 +14,21 @@ class SondageFixture extends Fixture implements OrderedFixtureInterface
     {
         $sondage = new Sondage();
         $sondage->setQuestion('Ca va ?');
-        $sondage->setAnswerAvailable(['oui', 'non']);
+        $sondage->setChoice(['oui', 'non']);
+        $sondage->setUser($this->getReference('user-fixture-manager'));
+
+        $answer1 = new Answer();
+        $answer1->setTitle('oui');
+        $answer1->setUser($this->getReference('user-fixture1'));
+        $answer1->setSondage($sondage);
+
+        $answer2 = new Answer();
+        $answer2->setTitle('non');
+        $answer2->setUser($this->getReference('user-fixture2'));
+        $answer2->setSondage($sondage);
+
+        $manager->persist($answer1);
+        $manager->persist($answer2);
         $manager->persist($sondage);
         $manager->flush();
     }

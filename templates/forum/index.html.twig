@@ -28,13 +28,13 @@
     {% for post in listPost %}
         <article class="post">
             <h2 class="post-title">
-                <a href="/forum/post/{{ post.id }}">
+                <a href="{{ path('forum_index_detail', {'id': post.id}) }}">
                     {{ post.title }}
                 </a>
             </h2>
 
             <p class="post-metadata">
-                <span class="metadata"><i class="iconfont iconfont-calendar"></i> {{ post.createdAt | date("d/m/y H:i:s") }}</span>
+                <span class="metadata"><i class="iconfont iconfont-calendar"></i> {{ post.createdAt | date }}</span>
                 <span class="metadata"><i class="iconfont iconfont-user"></i> {{ post.user.getCompleteName() }}</span>
                 {%  if post.authorizedUser | length %}
                     <span class="metadata float-right small">Visible par

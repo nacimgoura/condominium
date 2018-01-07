@@ -21,9 +21,11 @@ class ChargeType extends AbstractType
         $user = $options['user'];
         $charge = $options['charge'];
 
-        $condominiumId = $charge->getCondominium()->getId();
+        $condominiumId = null;
 
-        if ($user->getCondominium()) {
+        if ($charge->getCondominium()) {
+            $condominiumId = $charge->getCondominium()->getId();
+        } else if ($user->getCondominium()) {
             $condominiumId = $user->getCondominium()->getId();
         }
 

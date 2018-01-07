@@ -11,10 +11,10 @@
         </div>
         <div class="m-content__block">
             <p>
-                Montant total à payer : {{ payment.amountTotal | number_format(2, '.', ',') }} €
+                Montant total à payer : {{ payment.amountTotal | number_format() }} €
             </p>
             <p>
-                Montant déjà payé : {{ payment.amountPaid | number_format(2, '.', ',') }} €
+                Montant déjà payé : {{ payment.amountPaid | number_format() }} €
             </p>
             {{ form_start(form,  { 'action': action, 'attr': {'class': 'm-content__body'} } ) }}
             {{ form_widget(form,  { 'attr': {'class': 'm-content__block'} } ) }}

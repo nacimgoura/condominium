@@ -101,6 +101,18 @@ class User implements UserInterface, \Serializable
      */
     private $project;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Sondage", mappedBy="user", cascade={"all"})
+     * @ORM\JoinColumn(name="sondage_id", referencedColumnName="id", nullable=true)
+     */
+    private $sondage;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Answer", mappedBy="user", cascade={"all"})
+     * @ORM\JoinColumn(name="answer_id", referencedColumnName="id", nullable=true)
+     */
+    private $answer;
+
     public function __construct()
     {
         $this->roles = ['ROLE_USER'];
@@ -284,6 +296,54 @@ class User implements UserInterface, \Serializable
     public function getCreatedAt()
     {
         return $this->createdAt;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getProject()
+    {
+        return $this->project;
+    }
+
+    /**
+     * @param mixed $project
+     */
+    public function setProject($project)
+    {
+        $this->project = $project;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSondage()
+    {
+        return $this->sondage;
+    }
+
+    /**
+     * @param mixed $sondage
+     */
+    public function setSondage($sondage)
+    {
+        $this->sondage = $sondage;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAnswer()
+    {
+        return $this->answer;
+    }
+
+    /**
+     * @param mixed $answer
+     */
+    public function setAnswer($answer)
+    {
+        $this->answer = $answer;
     }
 
     /** @see \Serializable::serialize() */

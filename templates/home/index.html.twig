@@ -178,9 +178,9 @@
                                     {% for payment in listPayment %}
                                         <tr>
                                             <td>
-                                                {{ payment.amountPaid | number_format(2, '.', ',') }}
+                                                {{ payment.amountPaid | number_format() }}
                                                 /
-                                                {{ payment.amountTotal | number_format(2, '.', ',') }}
+                                                {{ payment.amountTotal | number_format() }}
                                                 €
                                             </td>
                                             <td>

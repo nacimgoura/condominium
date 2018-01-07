@@ -34,14 +34,14 @@ class Payment
     /**
      * @var float
      *
-     * @ORM\Column(name="amount_paid", type="float")
+     * @ORM\Column(name="amount_paid", type="float", scale=2)
      */
     private $amountPaid;
 
     /**
      * @var float
      *
-     * @ORM\Column(name="amount_total", type="float")
+     * @ORM\Column(name="amount_total", type="float", scale=2)
      */
     private $amountTotal;
 
@@ -80,7 +80,11 @@ class Payment
      */
     private $charge;
 
-
+    public function __construct()
+    {
+        $this->listAttachment = [];
+        $this->createdAt = new \DateTime();
+    }
 
     /**
      * Get id
@@ -230,14 +234,6 @@ class Payment
     public function setCharge($charge)
     {
         $this->charge = $charge;
-    }
-
-    /**
-     * @ORM\PrePersist
-     */
-    public function setDefaultValue()
-    {
-        $this->createdAt = new \DateTime();
     }
 
     /**

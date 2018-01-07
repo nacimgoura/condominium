@@ -37,8 +37,8 @@
                 <tr>
                     <td>{{ contract.title }}</td>
                     <td>{{ contract.condominium.title }}</td>
-                    <td>{{ contract.signatureDate | date("d/m/y") }}</td>
-                    <td>{{ contract.deadline | date("d/m/y") }}</td>
+                    <td>{{ contract.signatureDate | date }}</td>
+                    <td>{{ contract.deadline | date }}</td>
                     <td>
                         {% if contract.attachment %}
                             <a href="{{ asset('attachment/' ~ contract.attachment) }}" target="_blank" class="link-info">Voir</a>

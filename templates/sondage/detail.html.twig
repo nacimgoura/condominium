@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ sondage.question }}{% endblock %}
+
+{% block content %}
+    <h1 class="post-title">{{ sondage.question }}</h1>
+
+    <p class="post-metadata">
+        <span class="metadata"><i class="iconfont iconfont-calendar"></i> {{ sondage.createdAt | date }}</span>
+        <span class="metadata"><i class="iconfont iconfont-user"></i> {{ sondage.user.getCompleteName() }}</span>
+    </p>
+
+    <div class="post-content">
+
+        Choix possible :
+
+        <ul>
+            {% for choice in sondage.choice %}
+                <li>{{ choice }}</li>
+            {% endfor %}
+        </ul>
+
+        <hr>
+
+        Nombre de réponses : {{ sondage.answer | length }}
+
+        <div id="responsechart" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
+
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ parent() }}
+    <script src="//code.highcharts.com/4.1.8/highcharts.js"></script>
+    <script src="//code.highcharts.com/4.1.8/modules/exporting.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            {{ chart(chart) }}
+        });
+    </script>
+{% endblock %}

@@ -38,6 +38,12 @@
                         <span class="sidebar-nav__item-text">Réunions</span>
                     </a>
                 </li>
+                <li class="sidebar-nav__item">
+                    <a class="sidebar-nav__link" href="{{ path('sondage_index') }}">
+                        <span class="sidebar-nav__item_icon iconfont iconfont-alert-help"></span>
+                        <span class="sidebar-nav__item-text">Sondage</span>
+                    </a>
+                </li>
                 {% if is_granted('ROLE_ADMIN') %}
                     <li class="sidebar-nav__item">
                         <a class="sidebar-nav__link" href="{{ path('admin_gestion_user') }}">

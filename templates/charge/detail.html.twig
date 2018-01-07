@@ -15,7 +15,10 @@
                 Nombre de personnes concernées : {{ charge.user | length }}
             </p>
             <p class="row">
-                Total à payer : {{ charge.amount | number_format(2, '.', ',') }} €
+                Total à payer : {{ charge.amount | number_format() }} €
+            </p>
+            <p class="row">
+                Date d'échéance : {{ charge.deadline | date }}
             </p>
 
             {% if charge.attachment %}
@@ -44,14 +47,14 @@
                             <tr>
                                 <td>{{ payment.user }}</td>
                                 <td>
-                                    {% if (payment.amountPaid | number_format(2, '.', ',')) == (payment.amountTotal | number_format(2, '.', ',')) %}
+                                    {% if (payment.amountPaid | number_format()) == (payment.amountTotal | number_format()) %}
                                         <span class="badge badge-success">Payé</span>
                                     {% else %}
                                         <span class="badge badge-warning">En cours</span>
                                     {% endif %}
                                 </td>
-                                <td>{{ payment.amountPaid | number_format(2, '.', ',') }} €</td>
-                                <td>{{ payment.amountTotal | number_format(2, '.', ',') }} €</td>
+                                <td>{{ payment.amountPaid | number_format() }} €</td>
+                                <td>{{ payment.amountTotal | number_format() }} €</td>
                                 <td>
                                     {% if payment.listAttachment %}
                                         {% for attachment in payment.listAttachment %}
@@ -62,7 +65,7 @@
                                     {% endif %}
                                 </td>
                                 <td>
-                                    {% if payment.user.username == app.user.username and (payment.amountPaid | number_format(2, '.', ',')) != (payment.amountTotal | number_format(2, '.', ','))  %}
+                                    {% if payment.user.username == app.user.username and (payment.amountPaid | number_format()) != (payment.amountTotal | number_format())  %}
                                         <a href="{{ path('charge_pay', { 'id': charge.id }) }}" class="btn btn-success">Payer</a>
                                     {% endif %}
                                 </td>
