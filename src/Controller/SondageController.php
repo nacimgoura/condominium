@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Sondage;
+use App\Form\SondageType;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Ob\HighchartsBundle\Highcharts\Highchart;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -32,23 +34,25 @@ class SondageController extends Controller
             ->getRepository(Sondage::class)
             ->find($id);
 
+        $listAnswer = [];
+        foreach($sondage->getAnswer() as $answer) {
+            array_push($listAnswer, $answer->getTitle());
+        }
+
+        $data = [];
+        foreach (array_count_values($listAnswer) as $key => $value) {
+            array_push($data, [$key, $value]);
+        }
+
         $ob = new Highchart();
-        $ob->chart->renderTo('responsechart');  // The #id of the div where to render the chart
+        $ob->chart->renderTo('responsechart');
         $ob->title->text('Répartition des réponses');
-        $ob->plotOptions->pie(array(
+        $ob->plotOptions->pie([
             'allowPointSelect'  => true,
             'cursor'    => 'pointer',
-            'dataLabels'    => array('enabled' => false),
+            'dataLabels'    => ['enabled' => false],
             'showInLegend'  => true
-        ));
-        $data = array(
-            array('Firefox', 45.0),
-            array('IE', 26.8),
-            array('Chrome', 12.8),
-            array('Safari', 8.5),
-            array('Opera', 6.2),
-            array('Others', 0.7),
-        );
+        ]);
         $ob->series([[
             'type' => 'pie',
             'name' => 'response',
@@ -63,8 +67,75 @@ class SondageController extends Controller
 
     /**
      * @Route("/sondage/add", name="sondage_add")
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function addSondage() {
+    public function addSondage(Request $request) {
 
+        $sondage = new Sondage();
+        $sondage->setUser($this->getUser()->getId());
+
+        $form = $this->createForm(SondageType::class, $sondage);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $sondage = $form->getData();
+
+            $em = $this->getDoctrine()->getManager();
+            $em->merge($sondage);
+            $em->flush();
+
+            $this->addFlash(
+                'success',
+                'Sondage ajouté avec succès!'
+            );
+
+            return $this->redirectToRoute('sondage_index');
+        }
+
+        return $this->render('sondage/form.html.twig', [
+            'action' => $this->generateUrl('sondage_add'),
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/sondage/edit/{id}", requirements={"id" = "\d+"}, name="sondage_edit")
+     * @param $id
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
+    public function editSondage($id, Request $request) {
+
+        $sondage = $this->getDoctrine()
+            ->getRepository(Sondage::class)
+            ->find($id);
+
+        $form = $this->createForm(SondageType::class, $sondage);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $sondage = $form->getData();
+
+            $em = $this->getDoctrine()->getManager();
+            $em->merge($sondage);
+            $em->flush();
+
+            $this->addFlash(
+                'success',
+                'Sondage édité avec succès!'
+            );
+
+            return $this->redirectToRoute('sondage_index');
+        }
+
+        return $this->render('sondage/form.html.twig', [
+            'action' => $this->generateUrl('sondage_edit', ['id' => $id]),
+            'form' => $form->createView()
+        ]);
     }
 }

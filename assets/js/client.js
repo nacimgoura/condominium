@@ -217,7 +217,11 @@
     $('#post-add-comment').find('button').on('click', function () {
         $(this).addClass('hidden');
         $('#post-add-comment').find('div').removeClass('hidden');
+    });
 
+    $('#sondage-add-answer').find('button').on('click', function () {
+        $(this).addClass('hidden');
+        $('#sondage-add-answer').find('div').removeClass('hidden');
     });
 
     $(document).on('click', function (e) {

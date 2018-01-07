@@ -27,8 +27,14 @@ class SondageFixture extends Fixture implements OrderedFixtureInterface
         $answer2->setUser($this->getReference('user-fixture2'));
         $answer2->setSondage($sondage);
 
+        $answer3 = new Answer();
+        $answer3->setTitle('non');
+        $answer3->setUser($this->getReference('user-fixture3'));
+        $answer3->setSondage($sondage);
+
         $manager->persist($answer1);
         $manager->persist($answer2);
+        $manager->persist($answer3);
         $manager->persist($sondage);
         $manager->flush();
     }

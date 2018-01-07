@@ -12,19 +12,34 @@
 
     <div class="post-content">
 
-        Choix possible :
+        <div class="widget">
+            Choix possible :
 
-        <ul>
-            {% for choice in sondage.choice %}
-                <li>{{ choice }}</li>
-            {% endfor %}
-        </ul>
+            <ul>
+                {% for choice in sondage.choice %}
+                    <li>{{ choice }}</li>
+                {% endfor %}
+            </ul>
+
+            <div id="sondage-add-answer" class="widget">
+                <button class="btn btn-info">Répondre</button>
+                <div class="hidden">
+                    {{ render(controller(
+                        'App\\Controller\\AnswerController::addAnswer',
+                        { 'sondageId': sondage.id }
+                    )) }}
+                </div>
+            </div>
+
+        </div>
 
         <hr>
 
-        Nombre de réponses : {{ sondage.answer | length }}
+        <div class="widget">
+            Nombre de réponses : {{ sondage.answer | length }}
 
-        <div id="responsechart" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
+            <div id="responsechart" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
+        </div>
 
     </div>
 {% endblock %}

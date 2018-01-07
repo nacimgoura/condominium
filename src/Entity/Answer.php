@@ -91,8 +91,13 @@ class Answer
     /**
      * @param mixed $user
      */
-    public function setUser($user): void
+    public function setUser($user)
     {
         $this->user = $user;
+    }
+
+    public function __toString()
+    {
+        return $this->title;
     }
 }

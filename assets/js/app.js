@@ -8,8 +8,8 @@ require('flatpickr/dist/flatpickr.min.css');
 require('../css/style.css');
 require('../css/own.css');
 require('../css/forum.css');
-const flatpickr = require('flatpickr');
-const French = require("flatpickr/dist/l10n/fr").default.fr;
+import flatpickr from "flatpickr"
+import { French } from "flatpickr/dist/l10n/fr";
 flatpickr.localize(French);
 require('select2');
 require('../js/client');

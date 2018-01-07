@@ -21,8 +21,9 @@
     {% for sondage in listSondage %}
         <article class="post">
             <h2 class="post-title">
-                <a href="{{ path('sondage_detail', {'id': sondage.id}) }}">
+                <a href="{{ path('sondage_detail', { 'id': sondage.id }) }}">
                     {{ sondage.question }}
+                    <a href="{{ path('sondage_edit', { 'id': sondage.id }) }}" class="btn btn-warning float-right">Editer</a>
                 </a>
             </h2>
 

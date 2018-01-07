@@ -25,7 +25,7 @@ class ContractController extends Controller
     }
 
     /**
-     * @Route("/contract/{id}", name="contract_detail")
+     * @Route("/contract/{id}", requirements={"id" = "\d+"}, name="contract_detail")
      * @param $id
      * @return \Symfony\Component\HttpFoundation\Response
      */
