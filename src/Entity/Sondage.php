@@ -10,6 +10,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @ORM\Table(name="sondage")
  * @ORM\Entity(repositoryClass="App\Repository\SondageRepository")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Sondage
 {
@@ -54,6 +55,12 @@ class Sondage
     private $user;
 
     /**
+     * @var boolean
+     * @ORM\Column(name="is_meeting", type="boolean")
+     */
+    private $isMeeting;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="created_at", type="datetime")
@@ -63,6 +70,7 @@ class Sondage
     public function __construct()
     {
         $this->createdAt = new \DateTime();
+        $this->isMeeting = false;
     }
 
     /**
@@ -156,9 +164,32 @@ class Sondage
     /**
      * @return \DateTime
      */
-    public function getCreatedAt(): \DateTime
+    public function getCreatedAt()
     {
         return $this->createdAt;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMeeting(): bool
+    {
+        return $this->isMeeting;
+    }
+
+    /**
+     * @param bool $isMeeting
+     */
+    public function setIsMeeting(bool $isMeeting): void
+    {
+        $this->isMeeting = $isMeeting;
+    }
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function removeDuplicateChoice() {
+        $this->choice = array_unique($this->choice);
     }
 
 }

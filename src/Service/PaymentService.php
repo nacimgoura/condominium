@@ -20,6 +20,8 @@ class PaymentService
      * @param Charge $charge
      */
     public function generate(Charge $charge) {
+
+
         $listUser = $charge->getUser();
         foreach($listUser as $user) {
             $payment = new Payment();

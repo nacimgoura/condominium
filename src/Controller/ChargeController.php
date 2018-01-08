@@ -110,6 +110,8 @@ class ChargeController extends Controller
             ->getRepository(Charge::class)
             ->findOneById($id);
 
+        $amountCharge = $charge->getAmount();
+
         $attachment = $charge->getAttachment();
         $form = $this->createForm(ChargeType::class, $charge, [
             'charge' => $charge,
@@ -131,9 +133,9 @@ class ChargeController extends Controller
                 $formCharge->setAttachment($attachment);
             }
 
-            $em = $this->getDoctrine()->getManager();
+            $formCharge->setAmount($amountCharge);
 
-            $paymentService->generate($formCharge);
+            $em = $this->getDoctrine()->getManager();
             $em->persist($formCharge);
             $em->flush();
 
@@ -147,7 +149,8 @@ class ChargeController extends Controller
         return $this->render('charge/formcharge.html.twig', [
             'charge' => $charge,
             'action' => $this->generateUrl('charge_edit', ['id' => $id]),
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'edit' => true
         ]);
     }
 

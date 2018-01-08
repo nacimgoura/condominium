@@ -7,7 +7,11 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Sondage
  *
- * @ORM\Table(name="answer")
+ * @ORM\Table(name="answer",
+ *     uniqueConstraints={
+ *        @ORM\UniqueConstraint(name="answer_unique",
+ *            columns={"sondage_id", "user_id"})
+ *    })
  * @ORM\Entity(repositoryClass="App\Repository\AnswerRepository")
  */
 class Answer
@@ -24,7 +28,7 @@ class Answer
     /**
      * @var string
      *
-     * @ORM\Column(name="response", type="string", length=255)
+     * @ORM\Column(name="title", type="string", length=255)
      */
     private $title;
 

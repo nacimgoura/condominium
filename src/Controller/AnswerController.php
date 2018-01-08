@@ -26,29 +26,47 @@ class AnswerController extends Controller
             ->getRepository(Sondage::class)
             ->find($sondageId);
 
-        $answer->setUser($this->getUser()->getId());
-        $answer->setSondage($sondage->getId());
+        $answer->setUser($this->getUser());
+        $answer->setSondage($sondage);
 
         $form = $this->createForm(AnswerType::class, $answer, ['sondage' => $sondage]);
 
         $form->handleRequest($request);
 
-        dump($form->getData());
-
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $answer = $form->getData();
+            if ($form->isValid()) {
 
-            dump($answer);
+                $em = $this->getDoctrine()->getManager();
 
-            $em = $this->getDoctrine()->getManager();
-            $em->merge($answer);
-            $em->flush();
+                $oldAnswer =  $this->getDoctrine()
+                    ->getRepository(Answer::class)
+                    ->findOneBy([
+                        'sondage' => $sondageId,
+                        'user' => $this->getUser()
+                    ]);
 
-            $this->addFlash(
-                'success',
-                'Réponse ajouté avec succès!'
-            );
+                $answer = $form->getData();
+
+                if ($oldAnswer->getId()) {
+                    $oldAnswer->setTitle($answer->getTitle());
+                    $em->merge($oldAnswer);
+                } else {
+                    $em->persist($answer);
+                }
+
+                $em->flush();
+
+                $this->addFlash(
+                    'success',
+                    'Réponse ajouté avec succès!'
+                );
+            } else {
+                $this->addFlash(
+                    'danger',
+                    'Une erreur s\'est produite!'
+                );
+            }
 
             return $this->redirectToRoute('sondage_detail', [ 'id' => $sondage->getId() ]);
         }

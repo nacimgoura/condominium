@@ -10,7 +10,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Payment
  *
- * @ORM\Table(name="payment")
+ * @ORM\Table(name="payment",
+ *     uniqueConstraints={
+ *        @ORM\UniqueConstraint(name="payment_unique",
+ *            columns={"charge_id", "user_id"})
+ *    })
  * @ORM\Entity(repositoryClass="App\Repository\PaymentRepository")
  * @ORM\HasLifecycleCallbacks()
  */

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Answer;
 use App\Entity\Sondage;
 use App\Form\SondageType;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,7 +19,10 @@ class SondageController extends Controller
 
         $listSondage = $this->getDoctrine()
             ->getRepository(Sondage::class)
-            ->findByUser($this->getUser()->getId());
+            ->findBy([
+                'user' => $this->getUser()->getId(),
+                'isMeeting' => false
+            ]);
 
         return $this->render('sondage/index.html.twig', [
             'listSondage' => $listSondage
@@ -33,6 +37,13 @@ class SondageController extends Controller
         $sondage = $this->getDoctrine()
             ->getRepository(Sondage::class)
             ->find($id);
+
+        $ownAnswer = $this->getDoctrine()
+            ->getRepository(Answer::class)
+            ->findOneBy([
+                'sondage' => $sondage->getId(),
+                'user' => $this->getUser()
+            ]);
 
         $listAnswer = [];
         foreach($sondage->getAnswer() as $answer) {
@@ -50,7 +61,10 @@ class SondageController extends Controller
         $ob->plotOptions->pie([
             'allowPointSelect'  => true,
             'cursor'    => 'pointer',
-            'dataLabels'    => ['enabled' => false],
+            'dataLabels'    => [
+                'enabled' => true,
+                'format' => '<b>{point.name}</b>: {point.percentage:.1f} %'
+            ],
             'showInLegend'  => true
         ]);
         $ob->series([[
@@ -61,6 +75,7 @@ class SondageController extends Controller
 
         return $this->render('sondage/detail.html.twig', [
             'sondage' => $sondage,
+            'ownAnswer' => $ownAnswer,
             'chart' => $ob
         ]);
     }
@@ -73,7 +88,7 @@ class SondageController extends Controller
     public function addSondage(Request $request) {
 
         $sondage = new Sondage();
-        $sondage->setUser($this->getUser()->getId());
+        $sondage->setUser($this->getUser());
 
         $form = $this->createForm(SondageType::class, $sondage);
 
@@ -137,5 +152,28 @@ class SondageController extends Controller
             'action' => $this->generateUrl('sondage_edit', ['id' => $id]),
             'form' => $form->createView()
         ]);
+    }
+
+    /**
+     * @Route("/sondage/delete/{id}", requirements={"id" = "\d+"}, name="sondage_delete")
+     * @param $id
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function deleteSondage($id) {
+
+        $sondage = $this->getDoctrine()
+            ->getRepository(Sondage::class)
+            ->find($id);
+
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($sondage);
+        $em->flush();
+
+        $this->addFlash(
+            'success',
+            'Sondage supprimée avec succès!'
+        );
+
+        return $this->redirectToRoute('sondage_index');
     }
 }

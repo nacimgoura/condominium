@@ -33,7 +33,13 @@
 
         </div>
 
-        <hr>
+        <div class="widget">
+            {% if ownAnswer %}
+                Votre réponse : {{ ownAnswer.title }}
+            {% else %}
+                Vous n'avez pas encore répondu à ce sondage.
+            {% endif %}
+        </div>
 
         <div class="widget">
             Nombre de réponses : {{ sondage.answer | length }}
