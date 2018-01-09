@@ -31,7 +31,8 @@
                 <a class="link-info" href="#" id="add-another-choice">Ajouter un autre choix</a>
             </div>
 
-            {{ form_end(form) }}
+            {{ form_row(form._token) }}
+            {{ form_row(form.save) }}
         </div>
     </div>
 {% endblock %}

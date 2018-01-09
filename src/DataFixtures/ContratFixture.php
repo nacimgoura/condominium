@@ -21,7 +21,7 @@ class ContratFixture extends Fixture implements OrderedFixtureInterface
     {
         for ($i = 0; $i < 3; $i++) {
             $contract = new Contract();
-            $contract->setTitle($this->faker->generate()->text());
+            $contract->setTitle($this->faker->generate()->text(15));
             $contract->setSignatureDate($this->faker->generate()->dateTimeThisDecade);
             $contract->setDeadline($this->faker->generate()->dateTimeBetween('+0 days', '+2 years'));
             $contract->setAttachment('example.png');

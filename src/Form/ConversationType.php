@@ -27,7 +27,7 @@ class ConversationType extends AbstractType
          * si on est pas admin on affiche seulement la liste des membres de sa résidence
          */
         if ($user->getCondominium()) {
-            $builder->add('authorized_user', EntityType::class, [
+            $builder->add('authorizedUser', EntityType::class, [
                 'class' => 'App\Entity\User',
                 'query_builder' => function (EntityRepository $er) use ($user) {
                     return $er->createQueryBuilder('u')
@@ -37,9 +37,19 @@ class ConversationType extends AbstractType
                 },
                 'label' => 'Utilisateur autorisé à voir',
                 'multiple' => true
-            ]);
+            ])
+                ->add('project', EntityType::class, [
+                    'class' => 'App\Entity\Project',
+                    'query_builder' => function (EntityRepository $er) use ($user) {
+                        return $er->createQueryBuilder('p')
+                            ->where("p.condominium = :id")
+                            ->setParameter('id', $user->getCondominium()->getId())
+                            ->orderBy('p.title', 'ASC');
+                    },
+                    'label' => 'Projet lié'
+                ]);
         } else if (in_array('ROLE_ADMIN', $user->getRoles())) {
-            $builder->add('authorized_user', EntityType::class, [
+            $builder->add('authorizedUser', EntityType::class, [
                 'class' => 'App\Entity\User',
                 'query_builder' => function (EntityRepository $er) {
                     return $er->createQueryBuilder('u')

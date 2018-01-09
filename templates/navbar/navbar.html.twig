@@ -31,16 +31,18 @@
                             <span>NOTIFICATIONS</span>
                         </div>
                         <div class="navbar-dropdown-notifications__body">
+                            <ul>
                             {% for notif in listNotif %}
-                                <div>
-                                    {{ notif.title }}
-                                </div>
+                                <li>
+                                    {{ notif.title }} : {{ notif.content }}
+                                </li>
                             {% else %}
                                 <div class="navbar-dropdown-notifications__body-empty">
                                     <img class="navbar-dropdown-notifications__body-empty-image" src="/img/empty-notifications.png" alt="notification">
                                     <div class="navbar-dropdown-notifications__body-empty-text">Aucune notification!</div>
                                 </div>
                             {% endfor %}
+                            </ul>
                         </div>
                     </div>
                 </div>

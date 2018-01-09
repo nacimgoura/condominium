@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajout de projet{% endblock %}
+
+{% block containerClass %}container-fh l-2column{% endblock %}
+
+{% block content %}
+    <div class="m-content m-content__hb">
+        <div class="m-content__header">
+            <h4 class="m-content__heading">Projet</h4>
+        </div>
+        <div class="m-content__block">
+
+            {% if project and project.attachment %}
+                Pièce jointe existante :
+                <a href="{{ asset('attachment/' ~ project.attachment) }}" target="_blank" class="link-info">Voir</a>
+            {% endif %}
+
+            {{ form_start(form,  { 'action': action, 'attr': {'class': 'm-content__body', 'novalidate': 'novalidate' } } ) }}
+            {{ form_widget(form,  { 'attr': {'class': 'm-content__block'} } ) }}
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

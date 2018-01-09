@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\Payment;
 use App\Form\ChargeType;
 use App\Form\PaymentType;
+use App\Service\EmailService;
+use App\Service\NotificationService;
 use App\Service\PaymentService;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\File\File;
@@ -48,15 +50,17 @@ class ChargeController extends Controller
      * @Route("/charge/add", name="charge_add")
      * @param Request $request
      * @param PaymentService $paymentService
+     * @param NotificationService $notificationService
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function addCharge(Request $request, PaymentService $paymentService) {
+    public function addCharge(Request $request, PaymentService $paymentService, NotificationService $notificationService) {
 
         $this->denyAccessUnlessGranted('ROLE_MANAGER', null, 'Unable to access this page!');
 
         $charge = new Charge();
 
         $charge->setCondominium($this->getUser()->getCondominium());
+        $charge->setUser($this->getUser()->getCondominium()->getUser());
 
         $form = $this->createForm(ChargeType::class, $charge, [
             'charge' => $charge,
@@ -74,7 +78,6 @@ class ChargeController extends Controller
                 $fileName = md5(uniqid()).'.'.$file->guessExtension();
                 $file->move('attachment', $fileName);
                 $charge->setAttachment($fileName);
-                $charge->setListAttachment(array_merge($charge->getListAttachment(), [$charge->getAttachment()]));
             }
 
             $em = $this->getDoctrine()->getManager();
@@ -83,28 +86,33 @@ class ChargeController extends Controller
             $em->persist($charge);
             $em->flush();
 
+            foreach($this->getUser() as $user) {
+                $notificationService->add('Charge', 'Une charge vous à été affecté', $user);
+            }
+
             $this->addFlash(
                 'success',
                 'Charge ajoutée avec succès!'
             );
+
             return $this->redirectToRoute('charge_index');
         }
 
         return $this->render('charge/formcharge.html.twig', [
             'charge' => $charge,
             'action' => $this->generateUrl('charge_add'),
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'edit' => false
         ]);
     }
 
     /**
      * @Route("/charge/edit/{id}", requirements={"id" = "\d+"}, name="charge_edit")
      * @param Request $request
-     * @param PaymentService $paymentService
      * @param $id
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function editCharge(Request $request, PaymentService $paymentService, $id) {
+    public function editCharge(Request $request, $id) {
 
         $charge = $this->getDoctrine()
             ->getRepository(Charge::class)
@@ -240,6 +248,21 @@ class ChargeController extends Controller
             'action' => $this->generateUrl('charge_pay', ['id' => $id ]),
             'form' => $form->createView()
         ]);
+    }
+
+    /**
+     * @Route("/charge/callforcapital/{id}", requirements={"id" = "\d+"}, name="charge_create_call_for_capital")
+     * @param Request $request
+     * @param $id
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function createCallForCapital($id, EmailService $emailService) {
+
+        $charge = $this->getDoctrine()
+            ->getRepository(Charge::class)
+            ->find($id);
+
+
     }
 
 }

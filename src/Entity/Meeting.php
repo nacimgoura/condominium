@@ -17,7 +17,7 @@ class Meeting
     private $id;
 
     /**
-     * @ORM\OneToOne(targetEntity="Sondage", inversedBy="meeting")
+     * @ORM\OneToOne(targetEntity="Sondage")
      * @ORM\JoinColumn(name="sondage_id", referencedColumnName="id", nullable=true)
      */
     private $sondage;

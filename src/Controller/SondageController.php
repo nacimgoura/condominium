@@ -19,10 +19,7 @@ class SondageController extends Controller
 
         $listSondage = $this->getDoctrine()
             ->getRepository(Sondage::class)
-            ->findBy([
-                'user' => $this->getUser()->getId(),
-                'isMeeting' => false
-            ]);
+            ->findOwnSondage($this->getUser());
 
         return $this->render('sondage/index.html.twig', [
             'listSondage' => $listSondage
@@ -30,19 +27,23 @@ class SondageController extends Controller
     }
 
     /**
-     * @Route("/sondage/{id}", requirements={"id" = "\d+"}, name="sondage_detail")
+     * @Route("/sondage/{id}/{isInProject}", requirements={"id" = "\d+"}, name="sondage_detail")
+     * @param $id
+     * @param bool $isInProject
+     * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function showDetailSondage($id) {
+    public function showDetailSondage($id, $isInProject=false) {
 
         $sondage = $this->getDoctrine()
             ->getRepository(Sondage::class)
-            ->find($id);
+            ->findOneBy([
+                'id' => $id
+            ]);
 
         $ownAnswer = $this->getDoctrine()
             ->getRepository(Answer::class)
             ->findOneBy([
-                'sondage' => $sondage->getId(),
-                'user' => $this->getUser()
+                'sondage' => $sondage->getId()
             ]);
 
         $listAnswer = [];
@@ -76,6 +77,7 @@ class SondageController extends Controller
         return $this->render('sondage/detail.html.twig', [
             'sondage' => $sondage,
             'ownAnswer' => $ownAnswer,
+            'isInProject' => $isInProject,
             'chart' => $ob
         ]);
     }
@@ -88,7 +90,6 @@ class SondageController extends Controller
     public function addSondage(Request $request) {
 
         $sondage = new Sondage();
-        $sondage->setUser($this->getUser());
 
         $form = $this->createForm(SondageType::class, $sondage);
 
@@ -97,6 +98,7 @@ class SondageController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
 
             $sondage = $form->getData();
+            $sondage->setUser($this->getUser());
 
             $em = $this->getDoctrine()->getManager();
             $em->merge($sondage);
@@ -126,7 +128,14 @@ class SondageController extends Controller
 
         $sondage = $this->getDoctrine()
             ->getRepository(Sondage::class)
-            ->find($id);
+            ->findOneBy([
+                'id' => $id,
+                'user' => $this->getUser()
+            ]);
+
+        if (!$sondage) {
+            throw $this->createNotFoundException('Ce sondage n\'existe pas');
+        }
 
         $form = $this->createForm(SondageType::class, $sondage);
 
@@ -163,7 +172,14 @@ class SondageController extends Controller
 
         $sondage = $this->getDoctrine()
             ->getRepository(Sondage::class)
-            ->find($id);
+            ->findOneBy([
+                'id' => $id,
+                'user' => $this->getUser()
+            ]);
+
+        if (!$sondage) {
+            throw $this->createNotFoundException('Ce sondage n\'existe pas');
+        }
 
         $em = $this->getDoctrine()->getManager();
         $em->remove($sondage);

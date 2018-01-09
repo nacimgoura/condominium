@@ -40,7 +40,7 @@
                         <td>{{ user.condominium.title }}</td>
                         <td>{{ user.roles | join(' | ') }}</td>
                         <td>
-                            <a class="btn btn-primary" href="{{ path('home_index', {'_switch_user': user.username}) }}">Voir</a>
+                            <a class="btn btn-primary" href="{{ path('home_index', {'_switch_user': user.username}) }}">Contrôler</a>
                             <a class="btn btn-warning" href="{{ path('admin_edit_user', {'id': user.id}) }}">Editer</a>
                             <a class="btn btn-danger" href="{{ path('admin_delete_user', {'id': user.id}) }}">Supprimer</a>
                         </td>

@@ -83,10 +83,15 @@ class Conversation
     private $createdAt;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Condominium")
+     * @ORM\ManyToOne(targetEntity="Condominium", inversedBy="conversation")
      * @ORM\JoinColumn(name="condominium_id", referencedColumnName="id", nullable=true)
      */
     private $condominium;
+
+    /**
+     * @ORM\OneToOne(targetEntity="Project", mappedBy="conversation")
+     */
+    private $project;
 
     public function __construct()
     {
@@ -243,9 +248,25 @@ class Conversation
     /**
      * @param mixed $condominium
      */
-    public function setCondominium($condominium): void
+    public function setCondominium($condominium)
     {
         $this->condominium = $condominium;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getProject()
+    {
+        return $this->project;
+    }
+
+    /**
+     * @param mixed $project
+     */
+    public function setProject($project)
+    {
+        $this->project = $project;
     }
 
 }

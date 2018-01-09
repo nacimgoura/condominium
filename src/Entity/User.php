@@ -50,7 +50,7 @@ class User implements UserInterface, \Serializable
     private $username;
 
     /**
-     * @Assert\NotBlank()
+     * @Assert\Email()
      * @ORM\Column(name="email", type="string", length=255, unique=true)
      */
     private $email;
@@ -113,10 +113,16 @@ class User implements UserInterface, \Serializable
      */
     private $answer;
 
+    /**
+     * @ORM\Column(name="is_enabled", type="boolean")
+     */
+    private $isEnabled;
+
     public function __construct()
     {
         $this->roles = ['ROLE_USER'];
         $this->createdAt = new \DateTime();
+        $this->isEnabled = false;
     }
 
     /**
@@ -346,6 +352,22 @@ class User implements UserInterface, \Serializable
         $this->answer = $answer;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getisEnabled()
+    {
+        return $this->isEnabled;
+    }
+
+    /**
+     * @param mixed $isEnabled
+     */
+    public function setIsEnabled($isEnabled)
+    {
+        $this->isEnabled = $isEnabled;
+    }
+
     /** @see \Serializable::serialize() */
     public function serialize()
     {
@@ -396,5 +418,7 @@ class User implements UserInterface, \Serializable
     public function __toString() {
         return $this->getCompleteName();
     }
+
+
 }
 

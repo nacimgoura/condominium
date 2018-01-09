@@ -10,12 +10,17 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 class SondageFixture extends Fixture implements OrderedFixtureInterface
 {
+    /**
+     * Load user
+     *
+     * @param ObjectManager $manager
+     * @throws \Doctrine\Common\DataFixtures\BadMethodCallException
+     */
     public function load(ObjectManager $manager)
     {
         $sondage = new Sondage();
-        $sondage->setQuestion('Ca va ?');
+        $sondage->setQuestion('Devons nous acheter une nouvelle poubelle ?');
         $sondage->setChoice(['oui', 'non']);
-        $sondage->setUser($this->getReference('user-fixture-manager'));
 
         $answer1 = new Answer();
         $answer1->setTitle('oui');
@@ -32,6 +37,11 @@ class SondageFixture extends Fixture implements OrderedFixtureInterface
         $answer3->setUser($this->getReference('user-fixture3'));
         $answer3->setSondage($sondage);
 
+        $user = $this->getReference('user-manager-fixture');
+        $sondage->setUser($user);
+        $sondage->setProject($this->getReference('project-fixture'));
+        $sondage->setCondominium($user->getCondominium());
+
         $manager->persist($answer1);
         $manager->persist($answer2);
         $manager->persist($answer3);
@@ -41,6 +51,6 @@ class SondageFixture extends Fixture implements OrderedFixtureInterface
 
     public function getOrder()
     {
-        return 6;
+        return 8;
     }
 }

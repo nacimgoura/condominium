@@ -48,7 +48,7 @@ class AnswerController extends Controller
 
                 $answer = $form->getData();
 
-                if ($oldAnswer->getId()) {
+                if ($oldAnswer && $oldAnswer->getId()) {
                     $oldAnswer->setTitle($answer->getTitle());
                     $em->merge($oldAnswer);
                 } else {

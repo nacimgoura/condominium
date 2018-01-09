@@ -27,6 +27,7 @@ class ConversationRepository extends EntityRepository
             return $this->createQueryBuilder('c')
                 ->where('c.isArchived = false AND c.condominium = :condominium')
                 ->setParameter('condominium', $user->getCondominium()->getId())
+                ->orderBy('c.createdAt', 'DESC')
                 ->getQuery()
                 ->getResult();
         }

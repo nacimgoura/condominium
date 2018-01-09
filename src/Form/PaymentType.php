@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -16,6 +17,13 @@ class PaymentType extends AbstractType
             ->add('amountPaid', NumberType::class, [
                 'label' => 'Montant',
                 'scale' => 2
+            ])
+            ->add('type', ChoiceType::class, [
+                'label' => 'Type de virement',
+                'choices'  => [
+                    'Virement bancaire' => 'Virement bancaire',
+                    'Chèque' => 'Chèque'
+                ],
             ])
             ->add('attachment', FileType::class, [
                 'label' => 'pièce jointe',

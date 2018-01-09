@@ -16,9 +16,9 @@ class EmailService
     }
 
     public function sendEmail($recipient, $title, $message) {
-        $message = (new \Swift_Message($title))
-            ->setFrom('send@example.com')
-            ->setTo('nacim.goura@gmail.com')
+        $email = (new \Swift_Message($title))
+            ->setFrom('nacim.goura@gmail.com')
+            ->setTo($recipient)
             ->setBody(
                 $this->templating->render(
                     'emails/notification.html.twig', [
@@ -29,6 +29,6 @@ class EmailService
             )
         ;
 
-        $this->mailer->send($message);
+        $this->mailer->send($email);
     }
 }

@@ -24,8 +24,10 @@
                 <a href="{{ path('sondage_detail', { 'id': sondage.id }) }}">
                     {{ sondage.question }}
                     <div class="float-right">
-                        <a href="{{ path('sondage_edit', { 'id': sondage.id }) }}" class="btn btn-warning">Editer</a>
-                        <a href="{{ path('sondage_delete', { 'id': sondage.id }) }}" class="btn btn-danger">Supprimer</a>
+                        {% if sondage.user == app.user %}
+                            <a href="{{ path('sondage_edit', { 'id': sondage.id }) }}" class="btn btn-warning">Editer</a>
+                            <a href="{{ path('sondage_delete', { 'id': sondage.id }) }}" class="btn btn-danger">Supprimer</a>
+                        {% endif %}
                     </div>
                 </a>
             </h2>

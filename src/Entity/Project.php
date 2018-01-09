@@ -34,13 +34,13 @@ class Project
     /**
      * @var string
      * @Assert\NotBlank()
-     * @ORM\Column(name="content", type="text")
+     * @ORM\Column(name="description", type="text")
      */
     private $description;
 
     /**
      * @var string
-     *
+     * @Assert\NotBlank()
      * @ORM\Column(name="status", type="string", length=255)
      */
     private $status;
@@ -54,8 +54,9 @@ class Project
 
     /**
      * @var \DateTime
-     *
-     * @ORM\Column(name="deadline", type="datetime", nullable=true)
+     * @Assert\NotNull()
+     * @Assert\DateTime()
+     * @ORM\Column(name="deadline", type="datetime")
      */
     private $deadline;
 
@@ -75,7 +76,7 @@ class Project
     private $listAttachment;
 
     /**
-     * @ORM\OneToOne(targetEntity="Conversation")
+     * @ORM\OneToOne(targetEntity="Conversation", inversedBy="project")
      * @ORM\JoinColumn(name="conversation_id", referencedColumnName="id", nullable=true)
      */
     private $conversation;
@@ -96,10 +97,22 @@ class Project
     private $authorizedUser;
 
     /**
-     * @ORM\OneToMany(targetEntity="Sondage", mappedBy="project")
+     * @ORM\OneToMany(targetEntity="Sondage", mappedBy="project", cascade={"all"})
      * @ORM\JoinColumn(name="sondage_id", referencedColumnName="id", nullable=true)
      */
     private $sondage;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Condominium", inversedBy="project")
+     * @ORM\JoinColumn(name="condominium_id", referencedColumnName="id")
+     */
+    private $condominium;
+
+    public function __construct()
+    {
+        $this->listAttachment = [];
+        $this->createdAt = new \DateTime();
+    }
 
     /**
      * @return int
@@ -208,7 +221,7 @@ class Project
     /**
      * @return array
      */
-    public function getListAttachment(): array
+    public function getListAttachment()
     {
         return $this->listAttachment;
     }
@@ -216,7 +229,7 @@ class Project
     /**
      * @param array $listAttachment
      */
-    public function setListAttachment(array $listAttachment): void
+    public function setListAttachment(array $listAttachment)
     {
         $this->listAttachment = $listAttachment;
     }
@@ -285,5 +298,25 @@ class Project
         $this->sondage = $sondage;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getCondominium()
+    {
+        return $this->condominium;
+    }
+
+    /**
+     * @param mixed $condominium
+     */
+    public function setCondominium($condominium)
+    {
+        $this->condominium = $condominium;
+    }
+
+    public function __toString()
+    {
+       return $this->title;
+    }
 
 }

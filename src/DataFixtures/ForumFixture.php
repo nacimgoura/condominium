@@ -22,6 +22,7 @@ class ForumFixture extends Fixture implements OrderedFixtureInterface
      * Load data fixtures with the passed EntityManager
      *
      * @param ObjectManager $manager
+     * @throws \Doctrine\Common\DataFixtures\BadMethodCallException
      */
     public function load(ObjectManager $manager)
     {
@@ -52,6 +53,14 @@ class ForumFixture extends Fixture implements OrderedFixtureInterface
             $conversation->setAuthorizedUser($listUser);
             $manager->persist($conversation);
         }
+
+        $conversationProject = new Conversation();
+        $conversationProject->setTitle('Achat d\'une nouvelle poubelle ?');
+        $conversationProject->setDescription($this->faker->generate()->text);
+        $conversationProject->setContent($this->faker->generate()->text(2500));
+        $conversationProject->setUser($this->getReference('user-manager-fixture'));
+        $this->addReference('conversation-project-fixture', $conversationProject);
+        $manager->persist($conversationProject);
 
         $manager->flush();
     }

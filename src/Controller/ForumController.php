@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Message;
+use App\Entity\Project;
 use App\Form\MessageType;
+use App\Service\NotificationService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -84,18 +86,15 @@ class ForumController extends Controller
     /**
      * @Route("/forum/add", name="forum_add_post")
      * @param Request $request
+     * @param NotificationService $notificationService
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function addPost(Request $request) {
+    public function addPost(Request $request, NotificationService $notificationService) {
 
         $post = new Conversation();
-        $listUser = $this->getDoctrine()
-            ->getRepository(User::class)
-            ->findAllExceptAdminAndUs($this->getUser()->getUsername());
 
         // le post sera visible par le créateur et ceux qu'il autorise
-        array_push($listUser, $this->getUser());
-        $post->setAuthorizedUser($listUser);
+        $post->setAuthorizedUser([$this->getUser()]);
         $post->setCondominium($this->getUser()->getCondominium());
 
         $form = $this->createForm(ConversationType::class, $post, ['user' => $this->getUser()]);
@@ -111,6 +110,10 @@ class ForumController extends Controller
             $em->persist($post);
             $em->flush();
 
+            foreach($project->getAuthorizedUser() as $user) {
+                $notificationService->add('Projet', 'Vous avez été ajouté à la conversation sur le sujet "'.$project->getTitle(), $user.'"');
+            }
+
             $this->addFlash(
                 'success',
                 'Conversation ajouté avec succès!'
@@ -119,14 +122,14 @@ class ForumController extends Controller
             return $this->redirectToRoute('forum_index');
         }
 
-        return $this->render('forum/addconversation.html.twig', [
+        return $this->render('forum/form.html.twig', [
             'action' => $this->generateUrl('forum_add_post'),
             'form' => $form->createView()
         ]);
     }
 
     /**
-     * @Route("/forum/post/archive/{id}", name="forum_archive_post")
+     * @Route("/forum/post/archive/{id}", requirements={"id" = "\d+"}, name="forum_archive_post")
      * @param $id
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
@@ -149,7 +152,7 @@ class ForumController extends Controller
     }
 
     /**
-     * @Route("/forum/post/desarchive/{id}", name="forum_desarchive_post")
+     * @Route("/forum/post/desarchive/{id}", requirements={"id" = "\d+"}, name="forum_desarchive_post")
      * @param $id
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */

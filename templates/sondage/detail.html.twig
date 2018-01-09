@@ -7,31 +7,34 @@
 
     <p class="post-metadata">
         <span class="metadata"><i class="iconfont iconfont-calendar"></i> {{ sondage.createdAt | date }}</span>
-        <span class="metadata"><i class="iconfont iconfont-user"></i> {{ sondage.user.getCompleteName() }}</span>
     </p>
 
     <div class="post-content">
 
-        <div class="widget">
-            Choix possible :
+        {% if not isInProject %}
 
-            <ul>
-                {% for choice in sondage.choice %}
-                    <li>{{ choice }}</li>
-                {% endfor %}
-            </ul>
+            <div class="widget">
+                Choix possible :
 
-            <div id="sondage-add-answer" class="widget">
-                <button class="btn btn-info">Répondre</button>
-                <div class="hidden">
-                    {{ render(controller(
-                        'App\\Controller\\AnswerController::addAnswer',
-                        { 'sondageId': sondage.id }
-                    )) }}
+                <ul>
+                    {% for choice in sondage.choice %}
+                        <li>{{ choice }}</li>
+                    {% endfor %}
+                </ul>
+
+                <div id="sondage-add-answer" class="widget">
+                    <button class="btn btn-info">Répondre</button>
+                    <div class="hidden">
+                        {{ render(controller(
+                            'App\\Controller\\AnswerController::addAnswer',
+                            { 'sondageId': sondage.id }
+                        )) }}
+                    </div>
                 </div>
+
             </div>
 
-        </div>
+        {% endif %}
 
         <div class="widget">
             {% if ownAnswer %}

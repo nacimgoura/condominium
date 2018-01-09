@@ -55,6 +55,12 @@ class Sondage
     private $user;
 
     /**
+     * @ORM\ManyToOne(targetEntity="Condominium", inversedBy="sondage")
+     * @ORM\JoinColumn(name="condominium_id", referencedColumnName="id")
+     */
+    private $condominium;
+
+    /**
      * @var boolean
      * @ORM\Column(name="is_meeting", type="boolean")
      */
@@ -70,7 +76,9 @@ class Sondage
     public function __construct()
     {
         $this->createdAt = new \DateTime();
-        $this->isMeeting = false;
+        if (!$this->isMeeting) {
+            $this->isMeeting = false;
+        }
     }
 
     /**
@@ -172,15 +180,31 @@ class Sondage
     /**
      * @return bool
      */
-    public function isMeeting(): bool
+    public function isMeeting()
     {
         return $this->isMeeting;
     }
 
     /**
+     * @return mixed
+     */
+    public function getCondominium()
+    {
+        return $this->condominium;
+    }
+
+    /**
+     * @param mixed $condominium
+     */
+    public function setCondominium($condominium)
+    {
+        $this->condominium = $condominium;
+    }
+
+    /**
      * @param bool $isMeeting
      */
-    public function setIsMeeting(bool $isMeeting): void
+    public function setIsMeeting(bool $isMeeting)
     {
         $this->isMeeting = $isMeeting;
     }
@@ -190,6 +214,11 @@ class Sondage
      */
     public function removeDuplicateChoice() {
         $this->choice = array_unique($this->choice);
+    }
+
+    public function __toString()
+    {
+        return $this->question;
     }
 
 }

@@ -5,3 +5,7 @@
 #mceu_34 {
     display: none;
 }
+
+.navbar-dropdown-notifications__body {
+    font-size: 14px;
+}

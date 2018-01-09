@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ project.title }}{% endblock %}
+
+{% block bodyClass %}blog_post_show{% endblock %}
+
+{% block content %}
+    <h1 class="post-title">{{ project.title }}</h1>
+
+    <p class="post-metadata">
+        <span class="metadata"><i class="iconfont iconfont-info"></i> {{ project.status }}</span>
+        <span class="metadata"><i class="iconfont iconfont-calendar"></i> {{ project.createdAt | date }}</span>
+        <span class="metadata"><i class="iconfont iconfont-user"></i> {{ project.user }}</span>
+    </p>
+
+    <div class="widget">
+        <div>
+            Date de fin : <b>{{ project.deadline | date }}</b>
+        </div>
+
+        <hr>
+
+        <div class="post-content">
+            {{ project.description }}
+        </div>
+    </div>
+
+
+    <div class="widget">
+        {% if project.conversation %}
+            Conversation lié :
+            <a class="link-info" href="{{ path('forum_index_detail', {'id': project.conversation.id }) }}">Voir</a>
+        {% else %}
+            Aucune conversation lié :
+            <a class="link-info" href="{{ path('forum_add_post') }}">En créer une</a>
+        {% endif %}
+
+    </div>
+
+    <div class="widget">
+        <h3>Liste des sondages liés : </h3>
+        {% for sondage in project.sondage %}
+            {{ render(controller('App\\Controller\\SondageController::showDetailSondage', {'id': sondage.id, 'isInProject': true})) }}
+        {% endfor %}
+    </div>
+{% endblock %}

@@ -51,7 +51,7 @@ class UserFixture extends Fixture implements OrderedFixtureInterface
         $manager->persist($user_manager);
 
         $this->getReference('condominium-fixture1')->setManager($user_manager);
-        $this->addReference('user-fixture-manager', $user_manager);
+        $this->addReference('user-manager-fixture', $user_manager);
 
         for ($i = 0; $i <= 10; $i++) {
             $user = new User();

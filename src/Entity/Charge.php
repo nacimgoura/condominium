@@ -50,6 +50,7 @@ class Charge
     /**
      * @var \DateTime
      * @Assert\NotNull()
+     * @Assert\DateTime()
      * @ORM\Column(name="deadline", type="datetime")
      */
     private $deadline;
@@ -86,8 +87,7 @@ class Charge
     private $payment;
 
     /**
-     * @Assert\NotNull()
-     * @ORM\ManyToOne(targetEntity="Condominium")
+     * @ORM\ManyToOne(targetEntity="Condominium", inversedBy="charge")
      * @ORM\JoinColumn(name="condominium_id", referencedColumnName="id")
      */
     private $condominium;

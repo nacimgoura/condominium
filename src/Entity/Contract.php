@@ -56,11 +56,15 @@ class Contract
 
     /**
      * @Assert\NotNull()
-     * @ORM\ManyToOne(targetEntity="Condominium")
+     * @ORM\ManyToOne(targetEntity="Condominium", inversedBy="contract")
      * @ORM\JoinColumn(name="condominium_id", referencedColumnName="id")
      */
     private $condominium;
 
+    public function __construct()
+    {
+        $this->signatureDate = new \DateTime();
+    }
 
     /**
      * Get id

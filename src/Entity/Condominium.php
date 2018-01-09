@@ -33,15 +33,40 @@ class Condominium
     private $title;
 
     /**
+     * @ORM\OneToOne(targetEntity="User")
+     * @ORM\JoinColumn(name="manager_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+     */
+    private $manager;
+
+    /**
      * @ORM\OneToMany(targetEntity="User", mappedBy="condominium", cascade={"all"})
      */
     private $user;
 
     /**
-     * @ORM\OneToOne(targetEntity="User")
-     * @ORM\JoinColumn(name="manager_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+     * @ORM\OneToMany(targetEntity="Sondage", mappedBy="condominium", cascade={"all"})
      */
-    private $manager;
+    private $sondage;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Project", mappedBy="condominium", cascade={"all"})
+     */
+    private $project;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Conversation", mappedBy="condominium", cascade={"all"})
+     */
+    private $conversation;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Charge", mappedBy="condominium", cascade={"all"})
+     */
+    private $charge;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Contract", mappedBy="condominium", cascade={"all"})
+     */
+    private $contract;
 
 
     /**
@@ -77,22 +102,6 @@ class Condominium
     /**
      * @return mixed
      */
-    public function getUser()
-    {
-        return $this->user;
-    }
-
-    /**
-     * @param mixed $user
-     */
-    public function setUser($user)
-    {
-        $this->user = $user;
-    }
-
-    /**
-     * @return mixed
-     */
     public function getManager()
     {
         return $this->manager;
@@ -106,10 +115,109 @@ class Condominium
         $this->manager = $manager;
     }
 
+
+    /**
+     * @return mixed
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * @param mixed $user
+     */
+    public function setUser($user)
+    {
+        $this->user = $user;
+    }
+
+
     public function __toString()
     {
         return $this->title;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getSondage()
+    {
+        return $this->sondage;
+    }
+
+    /**
+     * @param mixed $sondage
+     */
+    public function setSondage($sondage)
+    {
+        $this->sondage = $sondage;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getProject()
+    {
+        return $this->project;
+    }
+
+    /**
+     * @param mixed $project
+     */
+    public function setProject($project)
+    {
+        $this->project = $project;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getConversation()
+    {
+        return $this->conversation;
+    }
+
+    /**
+     * @param mixed $conversation
+     */
+    public function setConversation($conversation)
+    {
+        $this->conversation = $conversation;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCharge()
+    {
+        return $this->charge;
+    }
+
+    /**
+     * @param mixed $charge
+     */
+    public function setCharge($charge)
+    {
+        $this->charge = $charge;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getContract()
+    {
+        return $this->contract;
+    }
+
+    /**
+     * @param mixed $contract
+     */
+    public function setContract($contract)
+    {
+        $this->contract = $contract;
+    }
+
 
 }
 

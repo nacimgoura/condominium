@@ -1,3 +1,64 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Liste des projets{% endblock %}
+
+{% block bodyClass %}blog_index{% endblock %}
+
+{% block content %}
+
+    <h2 class="content-heading">
+        Liste des projets<span class="m-datagrid__header-items-amount">({{ listProject | length }})</span>
+
+        {% if not is_granted(['ROLE_ADMIN']) %}
+            <span class="float-right">
+
+                <a href="{{ path('project_add') }}" class="btn btn-info">
+                    Ajouter une nouveau projet
+                </a>
+            </span>
+        {% endif %}
+
+    </h2>
+
+    <hr>
+
+    {% for project in listProject %}
+        <article class="post">
+            <h2 class="post-title">
+                <a href="{{ path('project_detail', { 'id': project.id }) }}">
+                    {{ project.title }}
+                </a>
+            </h2>
+
+            <p class="post-metadata">
+                <span class="metadata"><i class="iconfont iconfont-calendar"></i> {{ project.createdAt | date }}</span>
+                <span class="metadata"><i class="iconfont iconfont-user"></i> {{ project.user.getCompleteName() }}</span>
+                {%  if project.authorizedUser | length %}
+                    <span class="metadata float-right small">Visible par
+                        {{ project.authorizedUser | join(', ') }}
+                    </span>
+                {% endif %}
+            </p>
+
+            <p class="post-content">
+                {{ project.description }}
+            </p>
+
+            <p class="post-tags">
+
+                {% if is_granted(['ROLE_MANAGER', 'ROLE_ADMIN']) %}
+                    <span class="float-right">
+                        <a href="{{ path('project_delete', { 'id': project.id }) }}">
+                            <button class="btn btn-sm btn-danger">Supprimer</button>
+                        </a>
+                    </span>
+                {% endif %}
+            </p>
+
+        </article>
+    {% else %}
+        <h2 class="text-center">Aucun projet publié!</h2>
+    {% endfor %}
+
+{% endblock %}
+

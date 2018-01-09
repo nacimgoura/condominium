@@ -19,7 +19,6 @@ class NotificationService
         $notif = new Notification();
         $notif->setTitle($title);
         $notif->setContent($content);
-        $notif->setCreatedAt(new \DateTime());
         $notif->setUser($user);
 
         $this->em->persist($notif);
