@@ -55,7 +55,6 @@ class Contract
     private $attachment;
 
     /**
-     * @Assert\NotNull()
      * @ORM\ManyToOne(targetEntity="Condominium", inversedBy="contract")
      * @ORM\JoinColumn(name="condominium_id", referencedColumnName="id")
      */
@@ -143,7 +142,7 @@ class Contract
     /**
      * @param string $attachment
      */
-    public function setAttachment(string $attachment)
+    public function setAttachment($attachment)
     {
         $this->attachment = $attachment;
     }

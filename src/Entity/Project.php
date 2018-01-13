@@ -76,7 +76,7 @@ class Project
     private $listAttachment;
 
     /**
-     * @ORM\OneToOne(targetEntity="Conversation", inversedBy="project")
+     * @ORM\OneToOne(targetEntity="Conversation", inversedBy="project", orphanRemoval=true, cascade={"all"})
      * @ORM\JoinColumn(name="conversation_id", referencedColumnName="id", nullable=true)
      */
     private $conversation;
@@ -88,6 +88,10 @@ class Project
     private $user;
 
     /**
+     * @Assert\Count(
+     *      min = 1,
+     *      minMessage = "Vous devez choisir au moins un utilisateur"
+     * )
      * @ORM\ManyToMany(targetEntity="User")
      * JoinTable(name="user",
      *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
@@ -97,10 +101,23 @@ class Project
     private $authorizedUser;
 
     /**
-     * @ORM\OneToMany(targetEntity="Sondage", mappedBy="project", cascade={"all"})
-     * @ORM\JoinColumn(name="sondage_id", referencedColumnName="id", nullable=true)
+     * @Assert\Count(
+     *      min = 1,
+     *      minMessage = "Vous devez choisir au moins un sondage"
+     * )
+     * @ORM\ManyToMany(targetEntity="Sondage")
+     * JoinTable(name="sondage",
+     *      joinColumns={@ORM\JoinColumn(name="project_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="sondage_id", referencedColumnName="id")}
+     *      )
      */
     private $sondage;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Journalisation", mappedBy="project", cascade={"all"})
+     * @ORM\JoinColumn(name="journalisation_id", referencedColumnName="id", nullable=true)
+     */
+    private $journalisation;
 
     /**
      * @ORM\ManyToOne(targetEntity="Condominium", inversedBy="project")
@@ -213,7 +230,7 @@ class Project
     /**
      * @param string $attachment
      */
-    public function setAttachment(string $attachment)
+    public function setAttachment($attachment)
     {
         $this->attachment = $attachment;
     }
@@ -296,6 +313,22 @@ class Project
     public function setSondage($sondage)
     {
         $this->sondage = $sondage;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getJournalisation()
+    {
+        return $this->journalisation;
+    }
+
+    /**
+     * @param mixed $journalisation
+     */
+    public function setJournalisation($journalisation)
+    {
+        $this->journalisation = $journalisation;
     }
 
     /**

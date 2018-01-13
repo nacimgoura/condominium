@@ -18,11 +18,12 @@ class PaymentService
     /**
      * generates a charge payment for each user
      * @param Charge $charge
+     * @return array
      */
     public function generate(Charge $charge) {
+        $listUser = $charge->getAuthorizedUser();
+        $listPayment = [];
 
-
-        $listUser = $charge->getUser();
         foreach($listUser as $user) {
             $payment = new Payment();
             $payment->setUser($user);
@@ -30,7 +31,8 @@ class PaymentService
             $payment->setAmountPaid(0);
             $payment->setType('VIREMENT BANCAIRE');
             $payment->setCharge($charge);
-            $this->em->persist($payment);
+            array_push($listPayment, $payment);
         }
+        return $listPayment;
     }
 }

@@ -133,7 +133,7 @@
                                     <thead>
                                     <tr>
                                         <th>Titre</th>
-                                        <th>Status</th>
+                                        <th>Montant</th>
                                         <th>Lien</th>
                                     </tr>
                                     </thead>
@@ -143,7 +143,7 @@
                                             <td>
                                                 {{ charge.title }}
                                             </td>
-                                            <td></td>
+                                            <td>{{ charge.amount }}€</td>
                                             <td>
                                                 <a class="link-info" href={{ path('charge_detail', { 'id': charge.id }) }}>Aller</a>
                                             </td>

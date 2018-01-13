@@ -56,14 +56,23 @@ class Charge
     private $deadline;
 
     /**
-     * @Assert\NotNull()
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="charge")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
+     */
+    private $user;
+
+    /**
+     * @Assert\Count(
+     *      min = 1,
+     *      minMessage = "Vous devez choisir au moins un utilisateur"
+     * )
      * @ORM\ManyToMany(targetEntity="User")
      * JoinTable(name="user",
      *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")}
+     *      inverseJoinColumns={@ORM\JoinColumn(name="authorized_user", referencedColumnName="id")}
      *      )
      */
-    private $user;
+    private $authorizedUser;
 
     /**
      * @var string
@@ -81,7 +90,7 @@ class Charge
     private $contract;
 
     /**
-     * @ORM\OneToMany(targetEntity="Payment", mappedBy="charge", cascade={"all"})
+     * @ORM\OneToMany(targetEntity="Payment", mappedBy="charge", orphanRemoval=true, cascade={"all"})
      * @ORM\JoinColumn(name="payment_id", referencedColumnName="id")
      */
     private $payment;
@@ -171,6 +180,9 @@ class Charge
      */
     public function getStatus()
     {
+        if ($this->deadline < new \DateTime()) {
+            return 'Expirée';
+        }
         $sumPayment = 0;
         if ($this->payment) {
             foreach ($this->payment as $item) {
@@ -223,6 +235,8 @@ class Charge
         return $this->contract;
     }
 
+
+
     /**
      * @return mixed
      */
@@ -237,6 +251,22 @@ class Charge
     public function setUser($user)
     {
         $this->user = $user;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAuthorizedUser()
+    {
+        return $this->authorizedUser;
+    }
+
+    /**
+     * @param mixed $authorizedUser
+     */
+    public function setAuthorizedUser($authorizedUser)
+    {
+        $this->authorizedUser = $authorizedUser;
     }
 
     /**
@@ -261,6 +291,10 @@ class Charge
     public function getPayment()
     {
         return $this->payment;
+    }
+
+    public function setPayment($payment) {
+        return $this->payment = $payment;
     }
 
     public function __toString()

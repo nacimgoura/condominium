@@ -39,7 +39,7 @@
             {% for charge in listCharge %}
                 <tr>
                     <td>{{ charge.title }}</td>
-                    <td>{{ charge.user | join(', ') }}</td>
+                    <td>{{ charge.authorizedUser | join(', ') }}</td>
                     <td>{{ charge.condominium.title }}</td>
                     <td>
                         {% if charge.status == 'En cours' %}

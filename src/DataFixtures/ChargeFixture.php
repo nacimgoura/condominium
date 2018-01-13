@@ -33,14 +33,15 @@ class ChargeFixture extends Fixture implements OrderedFixtureInterface
             $charge->setTitle('charge '.$i);
             $charge->setAmount(mt_rand(10, 1000));
             $charge->setDeadline($this->faker->generate()->dateTimeThisMonth);
+            $charge->setUser($this->getReference('user-manager-fixture'));
             $charge->setCondominium($this->getReference('condominium-fixture1'));
 
             $listUser = [];
             for ($j = 0 ; $j < 3 ; $j++) {
                 array_push($listUser, $this->getReference('user-fixture'.$j));
             }
-            $charge->setUser($listUser);
-            $this->paymentService->generate($charge);
+            $charge->setAuthorizedUser($listUser);
+            $charge->setPayment($this->paymentService->generate($charge));
             $manager->persist($charge);
         }
         $manager->flush();

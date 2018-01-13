@@ -39,8 +39,9 @@ class SondageFixture extends Fixture implements OrderedFixtureInterface
 
         $user = $this->getReference('user-manager-fixture');
         $sondage->setUser($user);
-        $sondage->setProject($this->getReference('project-fixture'));
         $sondage->setCondominium($user->getCondominium());
+
+        $this->addReference('sondage-fixture', $sondage);
 
         $manager->persist($answer1);
         $manager->persist($answer2);
@@ -51,6 +52,6 @@ class SondageFixture extends Fixture implements OrderedFixtureInterface
 
     public function getOrder()
     {
-        return 8;
+        return 6;
     }
 }

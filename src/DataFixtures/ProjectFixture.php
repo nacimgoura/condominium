@@ -33,6 +33,7 @@ class ProjectFixture extends Fixture implements OrderedFixtureInterface
         $project->setConversation($this->getReference('conversation-project-fixture'));
         $project->setUser($this->getReference('user-manager-fixture'));
         $project->setCondominium($this->getReference('condominium-fixture1'));
+        $project->setSondage([$this->getReference('sondage-fixture')]);
         $listUserAuthorized = [$project->getUser()];
         for ($i = 0; $i <= 5; $i++) {
             array_push($listUserAuthorized, $this->getReference('user-fixture'.$i));
@@ -52,6 +53,6 @@ class ProjectFixture extends Fixture implements OrderedFixtureInterface
      */
     public function getOrder()
     {
-        return 6;
+        return 7;
     }
 }

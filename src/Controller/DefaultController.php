@@ -41,7 +41,7 @@ class DefaultController extends Controller
     public function navbar() {
         $listNotif = $this->getDoctrine()
             ->getRepository(Notification::class)
-            ->findByUser($this->getUser());
+            ->findNotifToday($this->getUser());
 
         return $this->render('navbar/navbar.html.twig',[
             "listNotif" => $listNotif,

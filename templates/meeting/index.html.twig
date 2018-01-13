@@ -1,3 +1,63 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Liste des réunions{% endblock %}
+
+{% block bodyClass %}blog_index{% endblock %}
+
+{% block content %}
+
+    <h2 class="content-heading">
+        Liste des réunions<span class="m-datagrid__header-items-amount">({{ listMeeting | length }})</span>
+
+        {% if is_granted(['ROLE_MANAGER']) %}
+            <span class="float-right">
+
+                <a href="{{ path('meeting_add') }}" class="btn btn-info">
+                    Créer une nouvelle réunion
+                </a>
+            </span>
+        {% endif %}
+
+    </h2>
+
+    <hr>
+
+    {% for meeting in listMeeting %}
+        <article class="post">
+            <h2 class="post-title">
+                <a href="{{ path('project_detail', { 'id': meeting.id }) }}">
+                    {{ meeting.title }}
+                </a>
+            </h2>
+
+            <p class="post-metadata">
+                <span class="metadata"><i class="iconfont iconfont-calendar"></i> {{ meeting.createdAt | date }}</span>
+            </p>
+
+            <p class="post-content">
+                La réunion aura lieu le {{ meeting.date | date }}, sauf changement par le manager suite aux votes du sondages.
+                <br>
+                <a class="link-info" href="{{ path('sondage_detail', {'id': meeting.sondage.id}) }}">Répondre au sondage</a>
+            </p>
+
+            <p class="post-tags">
+
+                {% if is_granted(['ROLE_MANAGER', 'ROLE_ADMIN']) %}
+                    <span class="float-right">
+                        <a href="{{ path('meeting_edit', { 'id': meeting.id }) }}">
+                            <button class="btn btn-sm btn-warning">Editer</button>
+                        </a>
+                        <a href="{{ path('meeting_delete', { 'id': meeting.id }) }}">
+                            <button class="btn btn-sm btn-danger">Supprimer</button>
+                        </a>
+                    </span>
+                {% endif %}
+            </p>
+
+        </article>
+    {% else %}
+        <h2 class="text-center">Aucune réunion en cours!</h2>
+    {% endfor %}
+
+{% endblock %}
+

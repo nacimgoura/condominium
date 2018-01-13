@@ -18,8 +18,8 @@ class ChargeType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
 
-        $user = $options['user'];
         $charge = $options['charge'];
+        $user = $options['user'];
 
         $condominiumId = null;
 
@@ -44,9 +44,9 @@ class ChargeType extends AbstractType
                     'class' => 'flatpickr'
                 ]
             ])
-            ->add('user', EntityType::class, [
+            ->add('authorizedUser', EntityType::class, [
                 'class' => 'App\Entity\User',
-                'query_builder' => function (EntityRepository $er) use ($user, $condominiumId) {
+                'query_builder' => function (EntityRepository $er) use ($condominiumId) {
                     return $er->createQueryBuilder('u')
                         ->where("u.username != 'admin' AND u.condominium = :id")
                         ->setParameter('id', $condominiumId)
@@ -57,7 +57,7 @@ class ChargeType extends AbstractType
             ])
             ->add('contract', EntityType::class, [
                 'class' => 'App\Entity\Contract',
-                'query_builder' => function (EntityRepository $er) use ($user, $condominiumId) {
+                'query_builder' => function (EntityRepository $er) use ($condominiumId) {
                     return $er->createQueryBuilder('contract')
                         ->where("contract.condominium = :id")
                         ->setParameter('id', $condominiumId)
@@ -69,8 +69,8 @@ class ChargeType extends AbstractType
             ])
             ->add('attachment', FileType::class, [
                 'label' => 'pièce jointe',
+                'data_class' => null,
                 'required' => false,
-                'data_class' => null
             ])
             ->add('save', SubmitType::class, ['label' => 'Valider', 'attr' => [
                 'class' => 'btn-success'
@@ -79,8 +79,8 @@ class ChargeType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver) {
         $resolver->setDefaults([
-            'user' => null,
-            'charge' => null
+            'charge' => null,
+            'user' => null
         ]);
     }
 }

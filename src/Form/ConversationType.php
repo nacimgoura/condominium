@@ -37,17 +37,7 @@ class ConversationType extends AbstractType
                 },
                 'label' => 'Utilisateur autorisé à voir',
                 'multiple' => true
-            ])
-                ->add('project', EntityType::class, [
-                    'class' => 'App\Entity\Project',
-                    'query_builder' => function (EntityRepository $er) use ($user) {
-                        return $er->createQueryBuilder('p')
-                            ->where("p.condominium = :id")
-                            ->setParameter('id', $user->getCondominium()->getId())
-                            ->orderBy('p.title', 'ASC');
-                    },
-                    'label' => 'Projet lié'
-                ]);
+            ]);
         } else if (in_array('ROLE_ADMIN', $user->getRoles())) {
             $builder->add('authorizedUser', EntityType::class, [
                 'class' => 'App\Entity\User',

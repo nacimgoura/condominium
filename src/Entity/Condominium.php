@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @ORM\Table(name="condominium")
  * @ORM\Entity(repositoryClass="App\Repository\CondominiumRepository")
- * @UniqueEntity("title, manager_id")
+ * @UniqueEntity("title")
  */
 class Condominium
 {
@@ -34,7 +34,7 @@ class Condominium
 
     /**
      * @ORM\OneToOne(targetEntity="User")
-     * @ORM\JoinColumn(name="manager_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+     * @ORM\JoinColumn(name="manager_id", referencedColumnName="id", nullable=true, onDelete="SET NULL", unique=true)
      */
     private $manager;
 
@@ -67,6 +67,11 @@ class Condominium
      * @ORM\OneToMany(targetEntity="Contract", mappedBy="condominium", cascade={"all"})
      */
     private $contract;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Meeting", mappedBy="condominium", cascade={"all"})
+     */
+    private $meeting;
 
 
     /**
@@ -218,6 +223,20 @@ class Condominium
         $this->contract = $contract;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getMeeting()
+    {
+        return $this->meeting;
+    }
 
+    /**
+     * @param mixed $meeting
+     */
+    public function setMeeting($meeting)
+    {
+        $this->meeting = $meeting;
+    }
 }
 

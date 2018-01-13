@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\Console\Input\InputArgument;
 use App\Entity\Charge;
 use App\Service\EmailService;
 
@@ -32,14 +33,16 @@ class ExpiredCharge extends ContainerAwareCommand
             // the "--help" option
             ->setHelp('Liste les charges restantes à payer dont la date d\'échéance est passée. 
             Possibilité de traiter que les charges de certaines propriétés. 
-            Une fois listé, envoie un mail au responsable de la propriété');
+            Une fois listé, envoie un mail au responsable de la propriété')
+
+            ->addArgument('condominium', InputArgument::OPTIONAL, 'Id de la copropriété ?');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $listCharge = $this->getContainer()->get('doctrine')
             ->getRepository(Charge::class)
-            ->findAllExpired();
+            ->findAllExpired($input->getArgument('condominium'));
 
         $output->writeln('Liste des charges avec une date dépassée ('.count($listCharge).')');
         $output->writeln('===========================');
@@ -53,12 +56,20 @@ class ExpiredCharge extends ContainerAwareCommand
             '/^(y|j|o)/i'
         );
 
-        if ($helper->ask($input, $output, $question)) {
-            $this->emailService->sendEmail(
-                'nacim.goura@gmail.com',
-                'Charges avec date dépassé',
-                'Bonjour, vous avez des charges avec des dates dépassés.');
-            $output->writeln('Message envoyé avec succès!');
+        $listTitleCharge = [];
+        foreach($listCharge as $charge) {
+            array_push($listTitleCharge, $charge->getTitle());
+        }
+
+        if (count($listCharge) > 0) {
+            if ($helper->ask($input, $output, $question)) {
+                $this->emailService->sendEmail(
+                    $listCharge[0]->getCondominium()->getManager()->getEmail(),
+                    'Charges avec date dépassé',
+                    'Bonjour, vous avez des charges avec des dates dépassées ('.join($listTitleCharge).') 
+                    dans votre copropriété.');
+                $output->writeln('Message envoyé avec succès!');
+            }
         }
     }
 }

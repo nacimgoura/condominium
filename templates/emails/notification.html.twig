@@ -191,6 +191,19 @@
                                 <td style="word-wrap:break-word;font-size:0px;padding:20px;" align="center">
                                     <div style="cursor:auto;color:#000000;font-family:Open Sans, Proxima Nova, Arial, Arial, Helvetica, sans-serif;font-size:14px;line-height:22px;text-align:center;">
                                         {{ message }}
+
+                                        {% if listNotif %}
+                                            <ul>
+                                                {% for notif in listNotif %}
+                                                <li><b>{{ notif.title }}</b> : {{ notif.content }}</li>
+                                                {% else %}
+                                                {% endfor %}
+                                            </ul>
+                                        {% endif %}
+
+                                        {% if token %}
+                                            <a href="{{ url('enabled_account', { 'token': token }) }}">Activer</a>
+                                        {% endif %}
                                     </div>
                                 </td>
                             </tr>

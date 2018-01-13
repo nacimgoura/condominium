@@ -7,12 +7,14 @@
     <h2 class="content-heading">
         Liste de vos sondages<span class="m-datagrid__header-items-amount">({{ listSondage | length }})</span>
 
-        <span class="float-right">
+        {% if not is_granted(['ROLE_ADMIN']) %}
+            <span class="float-right">
 
-            <a href="{{ path('sondage_add') }}" class="btn btn-info">
-                Ajouter un nouveau sondage
-            </a>
-        </span>
+                <a href="{{ path('sondage_add') }}" class="btn btn-info">
+                    Ajouter un nouveau sondage
+                </a>
+            </span>
+        {% endif %}
 
     </h2>
 
@@ -24,7 +26,7 @@
                 <a href="{{ path('sondage_detail', { 'id': sondage.id }) }}">
                     {{ sondage.question }}
                     <div class="float-right">
-                        {% if sondage.user == app.user %}
+                        {% if sondage.user == app.user or is_granted(['ROLE_MANAGER', 'ROLE_ADMIN']) %}
                             <a href="{{ path('sondage_edit', { 'id': sondage.id }) }}" class="btn btn-warning">Editer</a>
                             <a href="{{ path('sondage_delete', { 'id': sondage.id }) }}" class="btn btn-danger">Supprimer</a>
                         {% endif %}

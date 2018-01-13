@@ -12,6 +12,13 @@
         <span class="metadata"><i class="iconfont iconfont-user"></i> {{ post.user.getCompleteName() }}</span>
     </p>
 
+    {% if post.project %}
+        <div class="widget">
+            Projet liée :
+            <a class="link-info" href="{{ path('project_detail', { 'id': post.project.id }) }}">Voir</a>
+        </div>
+    {% endif %}
+
     <div class="post-content">
         {{ post.content | raw }}
     </div>

@@ -12,7 +12,7 @@
         Liste des utilisateurs<span class="m-datagrid__header-items-amount">({{ listCondominium | length }})</span>
     </h2>
     <div class="m-datatable">
-        <a href="#" class="btn btn-info">
+        <a href="{{ path('admin_add_condominium') }}" class="btn btn-info">
             Ajouter une copropriété
         </a>
 
@@ -30,7 +30,13 @@
             {% for condominium in listCondominium %}
                 <tr>
                     <td>{{ condominium.title }}</td>
-                    <td>{{ condominium.manager.getCompleteName() }}</td>
+                    <td>
+                        {% if condominium.manager %}
+                            {{ condominium.manager.getCompleteName() }}
+                        {% else %}
+                            Aucun manager
+                        {% endif %}
+                    </td>
                     <td>
                         <a class="btn btn-danger" href="{{ path('admin_delete_condominium', {'id': condominium.id}) }}">Supprimer</a>
                     </td>

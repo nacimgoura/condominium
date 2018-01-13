@@ -37,6 +37,7 @@ class UserFixture extends Fixture implements OrderedFixtureInterface
         $admin->setLastname('admin');
         $admin->setRoles(['ROLE_ADMIN']);
         $admin->setPassword($this->encoder->encodePassword($admin, 'admin'));
+        $admin->setIsEnabled(true);
         $manager->persist($admin);
 
         // create first user
@@ -48,6 +49,7 @@ class UserFixture extends Fixture implements OrderedFixtureInterface
         $user_manager->setPassword($this->encoder->encodePassword($user_manager, 'nacim'));
         $user_manager->setRoles(['ROLE_USER', 'ROLE_MANAGER']);
         $user_manager->setCondominium($this->getReference('condominium-fixture1'));
+        $user_manager->setIsEnabled(true);
         $manager->persist($user_manager);
 
         $this->getReference('condominium-fixture1')->setManager($user_manager);
@@ -61,6 +63,7 @@ class UserFixture extends Fixture implements OrderedFixtureInterface
             $user->setLastname($this->faker->generate()->lastName);
             $user->setPassword($this->encoder->encodePassword($user, 'nacim'));
             $user->setRoles(['ROLE_USER']);
+            $user->setIsEnabled(true);
             $this->addReference('user-fixture'.$i, $user);
             if ($i <= 5) {
                 $user->setCondominium($this->getReference('condominium-fixture1'));

@@ -11,8 +11,23 @@
         </div>
         <div class="m-content__block">
 
+            {% if is_granted(['ROLE_ADMIN', 'ROLE_MANAGER']) %}
+                <p class="row">
+                    <a class="btn btn-info" href="{{ path('charge_create_call_for_capital', { 'id': charge.id }) }}">
+                        Faire un appel de fond
+                    </a>
+                </p>
+            {% endif %}
+
+            {% if charge.contract %}
+                <div class="widget">
+                    Contrat liée :
+                    <a class="link-info" href="{{ path('contract_detail', { 'id': charge.contract.id }) }}">Voir</a>
+                </div>
+            {% endif %}
+
             <p class="row">
-                Nombre de personnes concernées : {{ charge.user | length }}
+                Nombre de personnes concernées : {{ charge.payment | length }}
             </p>
             <p class="row">
                 Total à payer : {{ charge.amount | number_format() }} €
@@ -80,7 +95,7 @@
 
             <a class="btn btn-primary" href="{{ path('charge_index') }}">Retourner à la liste des charges</a>
 
-            {% if is_granted('ROLE_ADMIN') %}
+            {% if is_granted(['ROLE_ADMIN', 'ROLE_MANAGER']) %}
                 <a href="{{ path('charge_delete', { 'id': charge.id }) }}" class="btn btn-danger">Supprimer la charge</a>
             {% endif %}
         </div>

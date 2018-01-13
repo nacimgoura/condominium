@@ -68,6 +68,7 @@ class ProjectType extends AbstractType
             ])
             ->add('attachment', FileType::class, [
                 'label' => 'pièce jointe',
+                'data_class' => null,
                 'required' => false
             ])
             ->add('save', SubmitType::class, ['label' => 'Valider', 'attr' => [
@@ -76,6 +77,9 @@ class ProjectType extends AbstractType
     }
 
     public function configureOptions(OptionsResolver $resolver) {
-        $resolver->setDefaults(['user' => null]);
+        $resolver->setDefaults([
+            'project' => null,
+            'user' => null
+        ]);
     }
 }

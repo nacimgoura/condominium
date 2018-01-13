@@ -11,6 +11,7 @@ use App\Service\PaymentService;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use App\Entity\Charge;
@@ -33,14 +34,10 @@ class ChargeController extends Controller
 
     /**
      * @Route("/charge/{id}", requirements={"id" = "\d+"}, name="charge_detail")
-     * @param $id
+     * @param Charge $charge
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function showDetail($id) {
-        $charge = $this->getDoctrine()
-            ->getRepository(Charge::class)
-            ->find($id);
-
+    public function showDetail(Charge $charge) {
         return $this->render('charge/detail.html.twig', [
             'charge' => $charge
         ]);
@@ -60,9 +57,10 @@ class ChargeController extends Controller
         $charge = new Charge();
 
         $charge->setCondominium($this->getUser()->getCondominium());
-        $charge->setUser($this->getUser()->getCondominium()->getUser());
+        $charge->setAuthorizedUser($this->getUser()->getCondominium()->getUser());
+        $charge->setUser($this->getUser());
 
-        $form = $this->createForm(ChargeType::class, $charge, [
+        $form = $this->createForm(ChargeType::class, $charge,  [
             'charge' => $charge,
             'user' => $this->getUser()
         ]);
@@ -80,14 +78,14 @@ class ChargeController extends Controller
                 $charge->setAttachment($fileName);
             }
 
-            $em = $this->getDoctrine()->getManager();
+            $charge->setPayment($paymentService->generate($charge));
 
-            $paymentService->generate($charge);
+            $em = $this->getDoctrine()->getManager();
             $em->persist($charge);
             $em->flush();
 
-            foreach($this->getUser() as $user) {
-                $notificationService->add('Charge', 'Une charge vous à été affecté', $user);
+            foreach($charge->getAuthorizedUser() as $user) {
+                $notificationService->add('Charge', 'La charge "'.$charge->getTitle().'" vous à été affecté', $user);
             }
 
             $this->addFlash(
@@ -109,16 +107,20 @@ class ChargeController extends Controller
     /**
      * @Route("/charge/edit/{id}", requirements={"id" = "\d+"}, name="charge_edit")
      * @param Request $request
-     * @param $id
+     * @param Charge $charge
+     * @param PaymentService $paymentService
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function editCharge(Request $request, $id) {
+    public function editCharge(Request $request, Charge $charge, PaymentService $paymentService, NotificationService $notificationService) {
 
-        $charge = $this->getDoctrine()
-            ->getRepository(Charge::class)
-            ->findOneById($id);
+        $this->denyAccessUnlessGranted(['ROLE_ADMIN', 'ROLE_MANAGER'], null, 'Unable to access this page!');
+
+        if (!$charge || ($charge->getUser()->getId() != $this->getUser()->getId() && $this->getUser()->getCondominium())) {
+            throw $this->createNotFoundException('Cette charge n\'existe pas');
+        }
 
         $amountCharge = $charge->getAmount();
+        $authorizedUser = clone $charge->getAuthorizedUser();
 
         $attachment = $charge->getAttachment();
         $form = $this->createForm(ChargeType::class, $charge, [
@@ -137,13 +139,19 @@ class ChargeController extends Controller
                 $fileName = md5(uniqid()).'.'.$file->guessExtension();
                 $file->move('attachment', $fileName);
                 $formCharge->setAttachment($fileName);
-            } else {
+            } else if ($attachment) {
                 $formCharge->setAttachment($attachment);
             }
 
             $formCharge->setAmount($amountCharge);
 
             $em = $this->getDoctrine()->getManager();
+
+            // si on ajoute un nouvel utilisateur on supprime les anciens paiement
+            if (count($formCharge->getAuthorizedUser()) != count($authorizedUser)) {
+                $formCharge->setPayment($paymentService->generate($formCharge));
+            }
+
             $em->persist($formCharge);
             $em->flush();
 
@@ -151,12 +159,17 @@ class ChargeController extends Controller
                 'success',
                 'Charge éditée avec succès!'
             );
+
+            foreach($charge->getAuthorizedUser() as $user) {
+                $notificationService->add('Charge', 'La charge "'.$charge->getTitle().'" a été édité', $user);
+            }
+
             return $this->redirectToRoute('charge_index');
         }
 
         return $this->render('charge/formcharge.html.twig', [
             'charge' => $charge,
-            'action' => $this->generateUrl('charge_edit', ['id' => $id]),
+            'action' => $this->generateUrl('charge_edit', ['id' => $charge->getId()]),
             'form' => $form->createView(),
             'edit' => true
         ]);
@@ -164,16 +177,21 @@ class ChargeController extends Controller
 
     /**
      * @Route("/charge/delete/{id}", requirements={"id" = "\d+"}, name="charge_delete")
-     * @param $id
+     * @param Charge $charge
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function deleteCharge($id) {
+    public function deleteCharge(Charge $charge, NotificationService $notificationService) {
 
         $this->denyAccessUnlessGranted(['ROLE_ADMIN', 'ROLE_MANAGER'], null, 'Unable to access this page!');
 
-        $charge = $this->getDoctrine()
-            ->getRepository(Charge::class)
-            ->find($id);
+        if (!$charge || ($charge->getUser()->getId() != $this->getUser()->getId() && $this->getUser()->getCondominium())) {
+            throw $this->createNotFoundException('Cette charge n\'existe pas');
+        }
+
+
+        foreach($charge->getAuthorizedUser() as $user) {
+            $notificationService->add('Charge', 'La charge "'.$charge->getTitle().'" a été supprimé', $user);
+        }
 
         $em = $this->getDoctrine()->getManager();
         $em->remove($charge);
@@ -190,15 +208,15 @@ class ChargeController extends Controller
     /**
      * @Route("/charge/pay/{id}", requirements={"id" = "\d+"}, name="charge_pay")
      * @param Request $request
-     * @param $id
+     * @param Charge $charge
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function payCharge(Request $request, $id) {
+    public function payCharge(Request $request, Charge $charge, NotificationService $notificationService) {
 
         $payment = $this->getDoctrine()
             ->getRepository(Payment::class)
             ->findOneBy([
-                'charge' => $id,
+                'charge' => $charge->getId(),
                 'user' => $this->getUser()
             ]);
 
@@ -237,32 +255,40 @@ class ChargeController extends Controller
                     'success',
                     'Payement effectué avec succès!'
                 );
+
+                $notificationService->add('Charge', 'Vous avez payé '.$newAmountPaid.'€ pour la charge "'.$charge->getTitle().'"', $this->getUser());
+
                 return $this->redirectToRoute('charge_detail', ['id' => $payment->getCharge()->getId()]);
             }
-
-
         }
 
         return $this->render('charge/formpayement.html.twig', [
             'payment' => $payment,
-            'action' => $this->generateUrl('charge_pay', ['id' => $id ]),
+            'action' => $this->generateUrl('charge_pay', ['id' => $charge->getId() ]),
             'form' => $form->createView()
         ]);
     }
 
     /**
      * @Route("/charge/callforcapital/{id}", requirements={"id" = "\d+"}, name="charge_create_call_for_capital")
-     * @param Request $request
-     * @param $id
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @param Charge $charge
+     * @param NotificationService $notificationService
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function createCallForCapital($id, EmailService $emailService) {
+    public function createCallForCapital(Charge $charge, NotificationService $notificationService) {
 
-        $charge = $this->getDoctrine()
-            ->getRepository(Charge::class)
-            ->find($id);
+        $this->denyAccessUnlessGranted(['ROLE_ADMIN', 'ROLE_MANAGER'], null, 'Unable to access this page!');
 
+        foreach($charge->getUser() as $user) {
+            $notificationService->add('Charge', 'Un appel de fond à été réalisé pour la charge "'.$charge->getTitle().'"', $user);
+        }
 
+        $this->addFlash(
+            'success',
+            'Appel de fond réalisé avec succès!'
+        );
+
+        return $this->redirectToRoute('charge_detail', ['id' => $charge->getId()]);
     }
 
 }

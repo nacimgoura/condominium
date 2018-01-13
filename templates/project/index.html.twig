@@ -38,6 +38,7 @@
                         {{ project.authorizedUser | join(', ') }}
                     </span>
                 {% endif %}
+                <span class="badge badge-info">{{ project.status }}</span>
             </p>
 
             <p class="post-content">
@@ -46,8 +47,11 @@
 
             <p class="post-tags">
 
-                {% if is_granted(['ROLE_MANAGER', 'ROLE_ADMIN']) %}
+                {% if project.user == app.user or is_granted(['ROLE_MANAGER', 'ROLE_ADMIN']) %}
                     <span class="float-right">
+                        <a href="{{ path('project_edit', { 'id': project.id }) }}">
+                            <button class="btn btn-sm btn-warning">Editer</button>
+                        </a>
                         <a href="{{ path('project_delete', { 'id': project.id }) }}">
                             <button class="btn btn-sm btn-danger">Supprimer</button>
                         </a>

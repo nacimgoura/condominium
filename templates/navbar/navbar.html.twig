@@ -34,8 +34,9 @@
                             <ul>
                             {% for notif in listNotif %}
                                 <li>
-                                    {{ notif.title }} : {{ notif.content }}
+                                    <b>{{ notif.title }}</b> : {{ notif.content }}
                                 </li>
+                                <hr>
                             {% else %}
                                 <div class="navbar-dropdown-notifications__body-empty">
                                     <img class="navbar-dropdown-notifications__body-empty-image" src="/img/empty-notifications.png" alt="notification">

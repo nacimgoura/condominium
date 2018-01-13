@@ -12,7 +12,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="conversation")
  * @ORM\Entity(repositoryClass="App\Repository\ConversationRepository")
  * @UniqueEntity("title")
- * @ORM\HasLifecycleCallbacks()
  */
 class Conversation
 {
@@ -50,7 +49,10 @@ class Conversation
     private $user;
 
     /**
-     * @Assert\NotBlank()
+     * @Assert\Count(
+     *      min = 1,
+     *      minMessage = "Vous devez choisir au moins un utilisateur"
+     * )
      * @ORM\ManyToMany(targetEntity="User")
      * JoinTable(name="user",
      *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},

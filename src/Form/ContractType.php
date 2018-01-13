@@ -25,7 +25,8 @@ class ContractType extends AbstractType
             ])
             ->add('attachment', FileType::class, [
                 'label' => 'pièce jointe',
-                'required' => false
+                'required' => false,
+                'data_class' => null
             ])
             ->add('save', SubmitType::class, ['label' => 'Valider', 'attr' => [
                 'class' => 'btn-success'

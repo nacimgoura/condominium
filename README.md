@@ -1,6 +1,6 @@
 # Application de gestion de copropriété
 
-Cette application à été réalisée en Symfony 4.0.2
+Cette application à été réalisée en Symfony 4.0.3
 
 ## Prérequis
  - PHP 7.2.0
@@ -35,3 +35,11 @@ php bin/console doctrine:migrations:diff -n
 php bin/console doctrine:migrations:migrate -n
 php bin/console doctrine:fixtures:load -n
 ```
+
+- Pour l'accès au projet `http://localhost:8000/`
+
+- Pour l'accès à phpmyadmin
+`http://localhost:8080/`
+
+- Pour l'accès à  mailcatcher
+`http://localhost:1080/`

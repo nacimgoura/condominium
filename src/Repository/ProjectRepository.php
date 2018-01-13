@@ -17,11 +17,22 @@ class ProjectRepository extends EntityRepository
                 ->orderBy('p.createdAt', 'DESC')
                 ->getQuery()
                 ->getResult();
+        } else if (in_array('ROLE_MANAGER', $user->getRoles())) {
+            return $this->createQueryBuilder('p')
+                ->join('p.authorizedUser', 'au')
+                ->where('au.id = :id OR p.user = :id AND p.condominium = :condominium')
+                ->setParameter('id', $user->getId())
+                ->setParameter('condominium', $user->getCondominium()->getId())
+                ->orderBy('p.createdAt', 'DESC')
+                ->getQuery()
+                ->getResult();
         }
         return $this->createQueryBuilder('p')
             ->join('p.authorizedUser', 'au')
-            ->where('au.id = :id OR p.user = :id')
+            ->where('au.id = :id OR p.user = :id AND p.condominium = :condominium AND p.deadline < :today')
             ->setParameter('id', $user->getId())
+            ->setParameter('condominium', $user->getCondominium()->getId())
+            ->setParameter('today', new \DateTime())
             ->orderBy('p.createdAt', 'DESC')
             ->getQuery()
             ->getResult();

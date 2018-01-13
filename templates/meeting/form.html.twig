@@ -1,14 +1,17 @@
+
 {% extends 'base.html.twig' %}
 
-{% block title %}Gestion du compte{% endblock %}
+{% block title %}Ajout d'une nouvelle réunion{% endblock %}
+
+{% block containerClass %}container-fh l-2column{% endblock %}
 
 {% block content %}
     <div class="m-content m-content__hb">
         <div class="m-content__header">
-            <h4 class="m-content__heading">Utilisateur</h4>
+            <h4 class="m-content__heading">Réunion</h4>
         </div>
         <div class="m-content__block">
-            {{ form_start(form,  { 'action': action, 'attr': {'class': 'm-content__body'} } ) }}
+            {{ form_start(form,  { 'action': action, 'attr': {'class': 'm-content__body', 'novalidate': 'novalidate'} } ) }}
             {{ form_widget(form,  { 'attr': {'class': 'm-content__block'} } ) }}
             {{ form_end(form) }}
         </div>

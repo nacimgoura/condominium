@@ -15,9 +15,18 @@ class ChargeRepository extends EntityRepository
 {
     /**
      * all charge with expired date
+     * @param null $condominiumId
      * @return array
      */
-    public function findAllExpired() {
+    public function findAllExpired($condominiumId=null) {
+        if ($condominiumId) {
+            return $this->createQueryBuilder('c')
+                ->where('c.deadline < :today AND c.condominium = :id')
+                ->setParameter('today', new \DateTime())
+                ->setParameter('id', $condominiumId)
+                ->getQuery()
+                ->getResult();
+        }
         return $this->createQueryBuilder('c')
             ->where('c.deadline < :today')
             ->setParameter('today', new \DateTime())
@@ -39,10 +48,11 @@ class ChargeRepository extends EntityRepository
                 ->getResult();
         }
         return $this->createQueryBuilder('c')
-            ->join('c.user', 'u')
-            ->where('u.id = :user AND c.condominium = :condominium')
+            ->join('c.authorizedUser', 'u')
+            ->where('u.id = :user AND c.condominium = :condominium AND c.deadline > :today')
             ->setParameter('user', $user->getId())
             ->setParameter('condominium', $user->getCondominium()->getId())
+            ->setParameter('today', new \DateTime())
             ->getQuery()
             ->getResult();
     }

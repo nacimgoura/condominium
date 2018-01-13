@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Condominium;
+use App\Form\CondominiumType;
+use App\Service\EmailService;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -38,13 +40,14 @@ class AdminController extends Controller
      * @Route("/admin/user/add", name="admin_add_user")
      * @param Request $request
      * @param UserPasswordEncoderInterface $encoder
+     * @param EmailService $emailService
      * @return Response
      */
-    public function addUser(Request $request, UserPasswordEncoderInterface $encoder) {
+    public function addUser(Request $request, UserPasswordEncoderInterface $encoder, EmailService $emailService) {
 
         $user = new User();
 
-        $form = $this->createForm(UserType::class, $user);
+        $form = $this->createForm(UserType::class, $user, ['user' => $this->getUser()]);
 
         $form->handleRequest($request);
 
@@ -61,15 +64,18 @@ class AdminController extends Controller
                 $condominium =  $doctrine
                     ->getRepository(Condominium::class)
                     ->findOneById($user->getCondominium()->getId());
-                $oldUser = $doctrine
-                    ->getRepository(User::class)
-                    ->findOneById($condominium->getManager()->getId());
 
-                $oldUser->setRoles(['ROLE_USER']);
+                if ($condominium->getManager()) {
+                    $oldUser = $doctrine
+                        ->getRepository(User::class)
+                        ->findOneById($condominium->getManager()->getId());
+                    $oldUser->setRoles(['ROLE_USER']);
+                    $em->persist($oldUser);
+                }
+
                 $condominium->setManager($user);
-
                 $em->persist($condominium);
-                $em->persist($oldUser);
+
             }
 
             $em->persist($user);
@@ -78,6 +84,13 @@ class AdminController extends Controller
             $this->addFlash(
                 'success',
                 'Utilisateur ajouté avec succès!'
+            );
+
+            $emailService->sendEmail($user->getEmail(),
+                'Activation du compte',
+                'Cliquer sur ce lien pour activer le compte',
+                null,
+                $user->getToken()
             );
 
             return $this->redirectToRoute('admin_gestion_user');
@@ -91,17 +104,13 @@ class AdminController extends Controller
 
     /**
      * @Route("/admin/user/edit/{id}", requirements={"id" = "\d+"}, name="admin_edit_user")
-     * @param $id
+     * @param User $user
      * @param Request $request
      * @return Response
      */
-    public function editUser($id, Request $request){
+    public function editUser(User $user, Request $request){
 
-        $user = $this->getDoctrine()
-            ->getRepository(User::class)
-            ->find($id);
-
-        $form = $this->createForm(UserType::class, $user);
+        $form = $this->createForm(UserType::class, $user, ['user' => $this->getUser()]);
 
         $form->handleRequest($request);
 
@@ -122,22 +131,18 @@ class AdminController extends Controller
         }
 
         return $this->render('admin/adduser.html.twig', [
-            'action' => $this->generateUrl('admin_edit_user', ['id' => $id]),
+            'action' => $this->generateUrl('admin_edit_user', ['id' => $user->getId()]),
             'form' => $form->createView()
         ]);
     }
 
     /**
      * @Route("/admin/user/delete/{id}", requirements={"id" = "\d+"}, name="admin_delete_user")
-     * @param $id
+     * @param User $user
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function deleteUser($id)
+    public function deleteUser(User $user)
     {
-        $user = $this->getDoctrine()
-            ->getRepository(User::class)
-            ->find($id);
-
         $em = $this->getDoctrine()->getManager();
         $em->remove($user);
         $em->flush();
@@ -151,10 +156,9 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route("/admin/condominium", name="admin_gestion_condominium")
+     * @Route("/admin/condominium", name="admin_list_condominium")
      */
     public function showListCondominium() {
-
         $listCondominium = $this->getDoctrine()
             ->getRepository(Condominium::class)
             ->findAll();
@@ -165,17 +169,49 @@ class AdminController extends Controller
     }
 
     /**
+     * @Route("/admin/condominium/add", name="admin_add_condominium")
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     */
+    public function addCondominium(Request $request) {
+
+        $condominium = new Condominium();
+
+        $form = $this->createForm(CondominiumType::class, $condominium);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $condominium = $form->getData();
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($condominium);
+            $em->flush();
+
+            $this->addFlash(
+                'success',
+                'Copropriété créé avec succès!'
+            );
+
+            return $this->redirectToRoute('admin_list_condominium');
+        }
+
+        return $this->render('admin/addcondominium.html.twig', [
+            'action' => $this->generateUrl('admin_add_condominium'),
+            'form' => $form->createView()
+        ]);
+
+    }
+
+    /**
      * @Route("/admin/condominium/delete/{id}", name="admin_delete_condominium")
-     * @param $id
+     * @param Condominium $condominium
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function deleteCondominium($id) {
-        $user = $this->getDoctrine()
-            ->getRepository(Condominium::class)
-            ->find($id);
-
+    public function deleteCondominium(Condominium $condominium) {
         $em = $this->getDoctrine()->getManager();
-        $em->remove($user);
+        $em->remove($condominium);
         $em->flush();
 
         $this->addFlash(

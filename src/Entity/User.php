@@ -72,6 +72,12 @@ class User implements UserInterface, \Serializable
     private $condominium;
 
     /**
+     * @ORM\OneToMany(targetEntity="Charge", mappedBy="user", cascade={"all"})
+     * @ORM\JoinColumn(name="charge_id", referencedColumnName="id", nullable=true)
+     */
+    private $charge;
+
+    /**
      * @ORM\OneToMany(targetEntity="Payment", mappedBy="user", cascade={"all"})
      * @ORM\JoinColumn(name="payment_id", referencedColumnName="id", nullable=true)
      */
@@ -102,6 +108,12 @@ class User implements UserInterface, \Serializable
     private $project;
 
     /**
+     * @ORM\OneToMany(targetEntity="Journalisation", mappedBy="user", cascade={"all"})
+     * @ORM\JoinColumn(name="journalisation_id", referencedColumnName="id", nullable=true)
+     */
+    private $journalisation;
+
+    /**
      * @ORM\OneToMany(targetEntity="Sondage", mappedBy="user", cascade={"all"})
      * @ORM\JoinColumn(name="sondage_id", referencedColumnName="id", nullable=true)
      */
@@ -118,11 +130,20 @@ class User implements UserInterface, \Serializable
      */
     private $isEnabled;
 
+    /**
+     * @ORM\Column(name="token", type="string", length=255, nullable=true)
+     */
+    private $token;
+
     public function __construct()
     {
         $this->roles = ['ROLE_USER'];
         $this->createdAt = new \DateTime();
         $this->isEnabled = false;
+        try {
+            $this->token = bin2hex(random_bytes(10));
+        } catch (\Exception $e) {
+        }
     }
 
     /**
@@ -251,6 +272,22 @@ class User implements UserInterface, \Serializable
     /**
      * @return mixed
      */
+    public function getCharge()
+    {
+        return $this->charge;
+    }
+
+    /**
+     * @param mixed $charge
+     */
+    public function setCharge($charge)
+    {
+        $this->charge = $charge;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getPayment()
     {
         return $this->payment;
@@ -323,6 +360,22 @@ class User implements UserInterface, \Serializable
     /**
      * @return mixed
      */
+    public function getJournalisation()
+    {
+        return $this->journalisation;
+    }
+
+    /**
+     * @param mixed $journalisation
+     */
+    public function setJournalisation($journalisation)
+    {
+        $this->journalisation = $journalisation;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getSondage()
     {
         return $this->sondage;
@@ -355,7 +408,7 @@ class User implements UserInterface, \Serializable
     /**
      * @return mixed
      */
-    public function getisEnabled()
+    public function getIsEnabled()
     {
         return $this->isEnabled;
     }
@@ -366,6 +419,18 @@ class User implements UserInterface, \Serializable
     public function setIsEnabled($isEnabled)
     {
         $this->isEnabled = $isEnabled;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getToken()
+    {
+        return $this->token;
+    }
+
+    public function setToken($token) {
+        $this->token = $token;
     }
 
     /** @see \Serializable::serialize() */
@@ -418,7 +483,6 @@ class User implements UserInterface, \Serializable
     public function __toString() {
         return $this->getCompleteName();
     }
-
 
 }
 

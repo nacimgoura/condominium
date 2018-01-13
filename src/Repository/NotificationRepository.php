@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\User;
 use Doctrine\ORM\EntityRepository;
 /**
  * NotificationRepository
@@ -11,4 +12,13 @@ use Doctrine\ORM\EntityRepository;
  */
 class NotificationRepository extends EntityRepository
 {
+    public function findNotifToday(User $user) {
+        return $this->createQueryBuilder('c')
+            ->where('c.createdAt <= :today AND c.user = :user')
+            ->setParameter('today', new \DateTime())
+            ->setParameter('user', $user)
+            ->orderBy('c.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 }

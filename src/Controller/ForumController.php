@@ -50,20 +50,17 @@ class ForumController extends Controller
 
     /**
      * @Route("/forum/post/{id}", requirements={"id" = "\d+"}, name="forum_index_detail")
-     * @param $id
+     * @param Conversation $post
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function showDetail($id, Request $request) {
+    public function showDetail(Conversation $post, Request $request) {
+
         $message = new Message();
 
         $form = $this->createForm(MessageType::class, $message);
 
         $form->handleRequest($request);
-
-        $post = $this->getDoctrine()
-            ->getRepository(Conversation::class)
-            ->find($id);
 
         if ($form->isSubmitted() && $form->isValid()) {
 
@@ -78,7 +75,7 @@ class ForumController extends Controller
 
         return $this->render('forum/detail.html.twig', [
             'post' => $post,
-            'action' => $this->generateUrl('forum_index_detail', ['id' => $id]),
+            'action' => $this->generateUrl('forum_index_detail', ['id' => $post->getId()]),
             'form' => $form->createView()
         ]);
     }
@@ -91,11 +88,16 @@ class ForumController extends Controller
      */
     public function addPost(Request $request, NotificationService $notificationService) {
 
+        $idProject = $request->get('project');
+
         $post = new Conversation();
 
         // le post sera visible par le créateur et ceux qu'il autorise
-        $post->setAuthorizedUser([$this->getUser()]);
-        $post->setCondominium($this->getUser()->getCondominium());
+        $condominium = $this->getUser()->getCondominium();
+        if ($condominium) {
+            $post->setAuthorizedUser($condominium->getUser());
+            $post->setCondominium($condominium);
+        }
 
         $form = $this->createForm(ConversationType::class, $post, ['user' => $this->getUser()]);
 
@@ -107,11 +109,21 @@ class ForumController extends Controller
             $post->setUser($this->getUser());
 
             $em = $this->getDoctrine()->getManager();
+
+            if ($idProject) {
+                $project = $this->getDoctrine()
+                    ->getRepository(Project::class)
+                    ->find($idProject);
+                $post->setAuthorizedUser($project->getAuthorizedUser());
+                $project->setConversation($post);
+                $em->persist($project);
+            }
+
             $em->persist($post);
             $em->flush();
 
-            foreach($project->getAuthorizedUser() as $user) {
-                $notificationService->add('Projet', 'Vous avez été ajouté à la conversation sur le sujet "'.$project->getTitle(), $user.'"');
+            foreach($post->getAuthorizedUser() as $user) {
+                $notificationService->add('Conversation', 'Vous avez été ajouté à la conversation sur le sujet "'.$post->getTitle().'".', $user);
             }
 
             $this->addFlash(
@@ -123,23 +135,63 @@ class ForumController extends Controller
         }
 
         return $this->render('forum/form.html.twig', [
-            'action' => $this->generateUrl('forum_add_post'),
+            'action' => $this->generateUrl('forum_add_post', ['project' => $idProject]),
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/forum/edit/{id}", name="forum_edit_post")
+     * @param Conversation $post
+     * @param Request $request
+     * @param NotificationService $notificationService
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
+    public function editPost(Conversation $post, Request $request, NotificationService $notificationService) {
+
+        $form = $this->createForm(ConversationType::class, $post, ['user' => $this->getUser()]);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $post = $form->getData();
+            $post->setUser($this->getUser());
+
+            $em = $this->getDoctrine()->getManager();
+
+            $em->merge($post);
+            $em->flush();
+
+            foreach($post->getAuthorizedUser() as $user) {
+                $notificationService->add('Conversation', 'La conversation "'.$post->getTitle().'" à été modifiée.', $user);
+            }
+
+            $this->addFlash(
+                'success',
+                'Conversation modifié avec succès!'
+            );
+
+            return $this->redirectToRoute('forum_index');
+        }
+
+        return $this->render('forum/form.html.twig', [
+            'action' => $this->generateUrl('forum_edit_post', ['id' => $post->getId()]),
             'form' => $form->createView()
         ]);
     }
 
     /**
      * @Route("/forum/post/archive/{id}", requirements={"id" = "\d+"}, name="forum_archive_post")
-     * @param $id
+     * @param Conversation $post
+     * @param NotificationService $notificationService
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function archivePost($id) {
+    public function archivePost(Conversation $post, NotificationService $notificationService) {
 
         $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');
 
         $em = $this->getDoctrine()->getManager();
-        $post = $em->getRepository(Conversation::class)->find($id);
-
         $post->setIsArchived(true);
         $em->flush();
 
@@ -148,21 +200,24 @@ class ForumController extends Controller
             'Conversation archivée avec succès!'
         );
 
+        foreach($post->getAuthorizedUser() as $user) {
+            $notificationService->add('Conversation', 'La conversation "'.$post->getTitle().'" a été archivée.', $user);
+        }
+
         return $this->redirectToRoute('forum_index');
     }
 
     /**
      * @Route("/forum/post/desarchive/{id}", requirements={"id" = "\d+"}, name="forum_desarchive_post")
-     * @param $id
+     * @param Conversation $post
+     * @param NotificationService $notificationService
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function desarchivePost($id) {
+    public function desarchivePost(Conversation $post, NotificationService $notificationService) {
 
         $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');
 
         $em = $this->getDoctrine()->getManager();
-        $post = $em->getRepository(Conversation::class)->find($id);
-
         $post->setIsArchived(false);
         $em->flush();
 
@@ -171,21 +226,26 @@ class ForumController extends Controller
             'Conversation désarchivée avec succès!'
         );
 
+        foreach($post->getAuthorizedUser() as $user) {
+            $notificationService->add('Conversation', 'La conversation "'.$post->getTitle().'" a été désarchivée.', $user);
+        }
+
         return $this->redirectToRoute('forum_show_archived');
     }
 
     /**
      * @Route("/forum/post/delete/{id}", name="forum_delete_post")
-     * @param $id
+     * @param Conversation $post
+     * @param NotificationService $notificationService
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function deletePost($id) {
+    public function deletePost(Conversation $post, NotificationService $notificationService) {
 
-        $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');
+        foreach($post->getAuthorizedUser() as $user) {
+            $notificationService->add('Conversation', 'La conversation "'.$post->getTitle().'" a été supprimée.', $user);
+        }
 
         $em = $this->getDoctrine()->getManager();
-        $post = $em->getRepository(Conversation::class)->find($id);
-
         $em->remove($post);
         $em->flush();
 

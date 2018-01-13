@@ -51,16 +51,21 @@
 
                 {{ include('forum/_post_tags.html.twig') }}
 
-                {% if is_granted('ROLE_ADMIN') %}
-                    <span class="float-right">
+                <span class="float-right">
+                    {% if is_granted('ROLE_ADMIN') %}
                         <a href="{{ path('forum_archive_post', { 'id': post.id }) }}">
                             <button class="btn btn-sm btn-warning">Archiver</button>
+                        </a>
+                    {% endif %}
+                    {% if app.user.id == post.user.id or is_granted(['ROLE_MANAGER', 'ROLE_ADMIN']) %}
+                        <a href="{{ path('forum_edit_post', { 'id': post.id }) }}">
+                            <button class="btn btn-sm btn-warning">Editer</button>
                         </a>
                         <a href="{{ path('forum_delete_post', { 'id': post.id }) }}">
                             <button class="btn btn-sm btn-danger">Supprimer</button>
                         </a>
-                    </span>
-                {% endif %}
+                    {% endif %}
+                </span>
             </p>
 
         </article>

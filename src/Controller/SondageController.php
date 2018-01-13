@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Answer;
 use App\Entity\Sondage;
 use App\Form\SondageType;
+use App\Service\NotificationService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Ob\HighchartsBundle\Highcharts\Highchart;
@@ -28,23 +29,15 @@ class SondageController extends Controller
 
     /**
      * @Route("/sondage/{id}/{isInProject}", requirements={"id" = "\d+"}, name="sondage_detail")
-     * @param $id
+     * @param Sondage $sondage
      * @param bool $isInProject
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function showDetailSondage($id, $isInProject=false) {
-
-        $sondage = $this->getDoctrine()
-            ->getRepository(Sondage::class)
-            ->findOneBy([
-                'id' => $id
-            ]);
+    public function showDetailSondage(Sondage $sondage, $isInProject=false) {
 
         $ownAnswer = $this->getDoctrine()
             ->getRepository(Answer::class)
-            ->findOneBy([
-                'sondage' => $sondage->getId()
-            ]);
+            ->findOneBySondage($sondage->getId());
 
         $listAnswer = [];
         foreach($sondage->getAnswer() as $answer) {
@@ -85,11 +78,14 @@ class SondageController extends Controller
     /**
      * @Route("/sondage/add", name="sondage_add")
      * @param Request $request
+     * @param NotificationService $notificationService
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function addSondage(Request $request) {
+    public function addSondage(Request $request, NotificationService $notificationService) {
 
         $sondage = new Sondage();
+        $sondage->setUser($this->getUser());
+        $sondage->setCondominium($this->getUser()->getCondominium());
 
         $form = $this->createForm(SondageType::class, $sondage);
 
@@ -98,16 +94,19 @@ class SondageController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
 
             $sondage = $form->getData();
-            $sondage->setUser($this->getUser());
 
             $em = $this->getDoctrine()->getManager();
-            $em->merge($sondage);
+            $em->persist($sondage);
             $em->flush();
 
             $this->addFlash(
                 'success',
                 'Sondage ajouté avec succès!'
             );
+
+            foreach($this->getUser()->getCondominium()->getUser() as $user) {
+                $notificationService->add('Sondage', 'Un sondage à été créé "'.$sondage->getQuestion().'"', $user);
+            }
 
             return $this->redirectToRoute('sondage_index');
         }
@@ -120,22 +119,11 @@ class SondageController extends Controller
 
     /**
      * @Route("/sondage/edit/{id}", requirements={"id" = "\d+"}, name="sondage_edit")
-     * @param $id
+     * @param Sondage $sondage
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function editSondage($id, Request $request) {
-
-        $sondage = $this->getDoctrine()
-            ->getRepository(Sondage::class)
-            ->findOneBy([
-                'id' => $id,
-                'user' => $this->getUser()
-            ]);
-
-        if (!$sondage) {
-            throw $this->createNotFoundException('Ce sondage n\'existe pas');
-        }
+    public function editSondage(Sondage $sondage, Request $request) {
 
         $form = $this->createForm(SondageType::class, $sondage);
 
@@ -158,32 +146,26 @@ class SondageController extends Controller
         }
 
         return $this->render('sondage/form.html.twig', [
-            'action' => $this->generateUrl('sondage_edit', ['id' => $id]),
+            'action' => $this->generateUrl('sondage_edit', ['id' => $sondage->getId()]),
             'form' => $form->createView()
         ]);
     }
 
     /**
      * @Route("/sondage/delete/{id}", requirements={"id" = "\d+"}, name="sondage_delete")
-     * @param $id
+     * @param Sondage $sondage
+     * @param NotificationService $notificationService
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function deleteSondage($id) {
-
-        $sondage = $this->getDoctrine()
-            ->getRepository(Sondage::class)
-            ->findOneBy([
-                'id' => $id,
-                'user' => $this->getUser()
-            ]);
-
-        if (!$sondage) {
-            throw $this->createNotFoundException('Ce sondage n\'existe pas');
-        }
+    public function deleteSondage(Sondage $sondage, NotificationService $notificationService) {
 
         $em = $this->getDoctrine()->getManager();
         $em->remove($sondage);
         $em->flush();
+
+        foreach($this->getUser()->getCondominium()->getUser() as $user) {
+            $notificationService->add('Sondage', 'Le sondage "'.$sondage->getQuestion().'" à été supprimé.', $user);
+        }
 
         $this->addFlash(
             'success',

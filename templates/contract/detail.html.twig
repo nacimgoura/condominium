@@ -17,6 +17,10 @@
                 </p>
             {% endif %}
 
+            <p class="row">
+                Date de signature : {{ contract.signatureDate | date }}
+            </p>
+
             <hr>
 
             <a class="btn btn-primary" href="{{ path('contract_index') }}">Retourner à la liste des charges</a>

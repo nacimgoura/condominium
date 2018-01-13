@@ -32,15 +32,43 @@
             <a class="link-info" href="{{ path('forum_index_detail', {'id': project.conversation.id }) }}">Voir</a>
         {% else %}
             Aucune conversation lié :
-            <a class="link-info" href="{{ path('forum_add_post') }}">En créer une</a>
+            <a class="link-info" href="{{ path('forum_add_post') }}?project={{ project.id }}">En créer une</a>
         {% endif %}
+    </div>
 
+    {% if project.attachment %}
+        <div class="widget">
+            <a href="{{ asset('attachment/' ~ project.attachment) }}" target="_blank" class="link-info">Pièce jointe</a>
+        </div>
+    {% endif %}
+
+    <div class="widget">
+        <h3>Journalisation</h3>
+        {% for journalisation in project.journalisation %}
+            Titre : {{ journalisation.title }}<br>
+            Description : {{ journalisation.description }}<br>
+            Rédacteur : {{ journalisation.user }}
+            {% if journalisation.attachment %}
+                <br>
+                <a href="{{ asset('attachment/' ~ journalisation.attachment) }}" target="_blank" class="link-info">Pièce jointe</a>
+            {% endif %}
+            <hr>
+        {% endfor %}
+        <div id="project-add-journalisation" class="widget">
+            <button class="btn btn-info">Ajouter des élements</button>
+            <div class="hidden">
+                {{ form_start(form,  { 'action': action, 'attr': {'class': 'm-content__body', 'novalidate': 'novalidate' } } ) }}
+                {{ form_widget(form,  { 'attr': {'class': 'm-content__block'} } ) }}
+                {{ form_end(form) }}
+            </div>
+        </div>
     </div>
 
     <div class="widget">
         <h3>Liste des sondages liés : </h3>
         {% for sondage in project.sondage %}
             {{ render(controller('App\\Controller\\SondageController::showDetailSondage', {'id': sondage.id, 'isInProject': true})) }}
+            <hr>
         {% endfor %}
     </div>
 {% endblock %}

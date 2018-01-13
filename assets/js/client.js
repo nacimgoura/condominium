@@ -224,6 +224,11 @@
         $('#sondage-add-answer').find('div').removeClass('hidden');
     });
 
+    $('#project-add-journalisation').find('button').on('click', function () {
+        $(this).addClass('hidden');
+        $('#project-add-journalisation').find('div').removeClass('hidden');
+    });
+
     $(document).on('click', function (e) {
         if ($('body').hasClass('sidebar-is-opened') && !$(e.target).closest('.sidebar-toggler').length) {
             if (!$(e.target).closest('.sidebar').length) {

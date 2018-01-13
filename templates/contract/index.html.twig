@@ -45,7 +45,13 @@
                         {% endif %}
                     </td>
                     <td>
+                        <a href="{{ path('contract_detail', {'id': contract.id}) }}" class="btn btn-info">
+                            Détail
+                        </a>
                         {% if is_granted(['ROLE_MANAGER', 'ROLE_ADMIN']) %}
+                            <a href="{{ path('contract_edit', {'id': contract.id}) }}" class="btn btn-warning">
+                                Editer
+                            </a>
                             <a href="{{ path('contract_delete', {'id': contract.id}) }}" class="btn btn-danger">
                                 Supprimer
                             </a>
