@@ -89,6 +89,9 @@
     "monolog/monolog": {
         "version": "1.23.0"
     },
+    "nikic/php-parser": {
+        "version": "v4.0.1"
+    },
     "ob/highcharts-bundle": {
         "version": "1.6"
     },
