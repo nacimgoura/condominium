@@ -1,6 +1,8 @@
 {
+    "name": "condominium",
+    "description": "Boilerplate for Symfony 4",
     "type": "project",
-    "license": "proprietary",
+    "license": "MIT",
     "require": {
         "php": "^7.1.3",
         "ob/highcharts-bundle": "^1.6",
@@ -55,7 +57,8 @@
             "assets:install --symlink --relative %PUBLIC_DIR%": "symfony-cmd"
         },
         "post-install-cmd": [
-            "@auto-scripts"
+            "@auto-scripts",
+            "./init_database.sh"
         ],
         "post-update-cmd": [
             "@auto-scripts"

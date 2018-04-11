@@ -1,10 +1,11 @@
 {
-    "license": "UNLICENSED",
-    "private": true,
+    "name": "condominium",
+    "version": "0.0.1",
+    "license": "MIT",
     "author": {
         "name": "Nacim Goura",
         "email": "nacim.goura.dev@gmail.com",
-        "url": "nacimgoura.fr"
+        "url": "https://nacimgoura.github.io/"
     },
     "scripts": {
         "dev-server": "encore dev-server",
@@ -13,14 +14,14 @@
         "build": "encore production"
     },
     "dependencies": {
-        "bootstrap": "^4.0.0-beta.3",
-        "flatpickr": "^4.2.3",
-        "jquery": "^3.2.1",
+        "bootstrap": "^4.1.1",
+        "flatpickr": "^4.4.4",
+        "jquery": "^3.3.1",
         "select2": "^4.0.6-rc.1"
     },
     "devDependencies": {
-        "@symfony/webpack-encore": "^0.17.1",
-        "node-sass": "^4.7.2",
-        "sass-loader": "^6.0.6"
+        "@symfony/webpack-encore": "^0.20.1",
+        "node-sass": "^4.9.0",
+        "sass-loader": "^7.0.1"
     }
 }
