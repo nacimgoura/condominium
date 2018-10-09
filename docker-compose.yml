@@ -1,22 +1,22 @@
 # docker-compose.yml
-version: '2'
+version: "2"
 services:
-    db:
-        image: mysql
-        ports:
-            - 3306:3306
-        volumes:
-            - "./.data/db:/var/lib/mysql"
-        environment:
-            MYSQL_ROOT_PASSWORD: root
-    phpmyadmin:
-        image: phpmyadmin/phpmyadmin
-        ports:
-            - "8080:80"
-        links:
-            - db
-    mailcatcher:
-        image: schickling/mailcatcher
-        ports:
-            - "1025:1025"
-            - "1080:1080"
+  db:
+    image: mysql
+    ports:
+      - 3306:3306
+    volumes:
+      - "./.data/db:/var/lib/mysql"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8081:80"
+    links:
+      - db
+  mailcatcher:
+    image: schickling/mailcatcher
+    ports:
+      - "1025:1025"
+      - "1080:1080"
